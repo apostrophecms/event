@@ -1,0 +1,28 @@
+{# modules/event-page/views/index.html #}
+
+{% extends "layout.html" %}
+{% import '@apostrophecms/pager:macros.html' as pager with context %}
+
+{% block main %}
+<div class="container w-full mx-auto bg-gray-300">
+    <div class="flex flex-wrap justify-around gap-2 mx-auto">
+        {% for event in data.pieces %}
+        <event>
+            <div class="rounded-lg shadow-lg bg-white p-2 flex flex-col">
+                <h2>{{ event.title }}</h2>
+                <div>
+                    <a href="{{ event._url }}">Details</a>
+                </div>
+                <div>Image here</div>
+                <div>{{ event.startdate }}</div>
+            </div>
+        </event>
+        {% endfor %}
+    </div>
+</div>
+
+{{ pager.render({
+page: data.currentPage,
+total: data.totalPages
+}, data.url) }}
+{% endblock %}

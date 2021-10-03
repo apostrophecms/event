@@ -1,0 +1,73 @@
+{# modules/event-page/views/show.html #}
+{% extends "layout.html" %}
+
+{% block main %}
+<div class="container mx-auto">
+
+  <!-- event header - date, time, location -->
+  <div class="pt-6">
+    <div class="flex flex-row text-4xl font-bold p-4 gap-4 bg-gray-300 rounded-md">
+      <div>{{ data.piece.startdate | date('D MMM') }}</div>
+      {% if data.piece.enddate > '2020-01-01' %}
+      <div>-</div>
+      <div>{{ data.piece.enddate | date('D MMM') }}</div>
+      {% else %}
+      {% if data.piece.starttime != null %}
+      <div>at</div>
+      {% set timeparts = data.piece.starttime.split(':') %}
+      <div>{{ timeparts[0] }}:{{ timeparts[1] }} </div>
+      {% endif %}
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Header image -->
+  {% if data.piece.image.items.length > 0 %}
+  <div class="border-2 rounded-xl my-6 p-2 shadow-xl">
+    <div>
+      {% area data.piece, 'image' %}
+    </div>
+  </div>
+  {% else %}
+  <div class="h-48 border-2 rounded-xl my-6 p-2 shadow-xl">
+    <div class="min-h-full flex flex-wrap content-center rounded-xl bg-yellow-600">
+      <div class="flex-auto text-center text-white text-5xl">
+        {{ data.piece.title }}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- reading, if applicable -->
+  {% if data.piece.scripture.length > 0 %}
+  <div>
+    <div class="flex flex-row text-3xl font-bold p-4 gap-4 bg-gray-300 rounded-md">
+      Scripture: {{ data.piece.scripture }}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- praise team -->
+
+  <!-- Start song list -->
+  {% if data.piece._songs.length > 0 %}
+  <div class='pt-6'>
+    <div class="text-4xl font-bold p-4 gap-4 bg-gray-300 rounded-md">
+      Song list
+    </div>
+    <div class="flex flex-col justify-around gap-4 py-2">
+      {% for song in data.piece._songs %}
+      <a class="border-2 rounded-md flex flex-row justify-between p-2 shadow-sm hover:shadow-lg cursor-pointer"
+        href='{{ song.video.url }}' target='_blank'>
+        <div class="mx-auto text-lg font-semibold italic">{{ song.title }}</div>
+        <div>
+          <i class="text-3xl fa fa-play"></i>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

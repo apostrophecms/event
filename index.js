@@ -87,13 +87,19 @@ module.exports = {
         label: 'Start time',
         type: 'time',
         def: '09:00:00',
-        required: true
+        required: true,
+        if: {
+          allDay: false
+        }
       },
       endTime: {
         label: 'End time',
         type: 'time',
         def: '17:30:00',
-        required: true
+        required: true,
+        if: {
+          allDay: false
+        }
       },
       dateType: {
         label: 'What type of event is this?',
@@ -106,13 +112,11 @@ module.exports = {
           },
           {
             label: 'Consecutive Days',
-            value: 'consecutive',
-            showFields: ['enddate']
+            value: 'consecutive'
           },
           {
             label: 'Recurring',
             value: 'repeat',
-            showFields: ['repeatInterval', 'repeatCount']
           }
         ],
         def: 'single'
@@ -120,6 +124,9 @@ module.exports = {
       enddate: {
         label: 'End date',
         type: 'date',
+        if: {
+          dateType: 'consecutive'
+        }
       },
       repeatInterval: {
         label: 'How often does the event repeat?',
@@ -133,12 +140,18 @@ module.exports = {
             label: 'Every month',
             value: 'months'
           }
-        ]
+        ],
+        if: {
+          dateType: 'repeat'
+        }
       },
       repeatCount: {
         label: 'How many times does it repeat?',
         type: 'integer',
-        def: 1
+        def: 1,
+        if: {
+          dateType: 'repeat'
+        }
       },
       description: {
         type: 'string',
@@ -161,7 +174,7 @@ module.exports = {
     group: {
       basics: {
         label: 'Basics',
-        fields: ['title', 'slug', 'startDate', 'allDay', 'startTime', 'endTime']
+        fields: ['title', 'slug', 'description', 'startDate', 'allDay', 'startTime', 'endTime']
       },
       advanced: {
         label: 'Advanced',

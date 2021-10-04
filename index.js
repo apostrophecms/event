@@ -86,7 +86,7 @@ module.exports = {
       startTime: {
         label: 'Start time',
         type: 'time',
-        def: '09:00:00',
+        def: '09:00 AM',
         required: true,
         if: {
           allDay: false
@@ -95,7 +95,7 @@ module.exports = {
       endTime: {
         label: 'End time',
         type: 'time',
-        def: '17:30:00',
+        def: '05:30 PM',
         required: true,
         if: {
           allDay: false
@@ -187,52 +187,46 @@ module.exports = {
     }
   },
 
-  init(self) {
-    // what is the purpose of this extend?
-    self.extendAutocompleteCursor = function (cursor) {
-      return cursor.upcoming(true);
-    }
-  },
-
-  handlers(self) {
+  handlers(self, options) {
     return {
-      beforeSave: {
-        function(self, piece) {
-          // Why have the "callback" function in here in apos 2?
-          denormalizeDatesAndTimes(piece)
+
+      'beforeSave': {
+        async beforeSaveHandler(req, piece, options) {
+          self.denormalizeDatesAndTimes(piece)
+          console.log('starttime', piece.startTime)
         }
       },
+
+      'denormalizeDatesAndTimes': function (piece) {
+        // Parse our dates and times
+        let startTime = piece.startTime
+        let startDate = piece.startDate
+        let endTime = piece.endTime
+        let enddate
+
+        if (piece.dateType === 'consecutive') {
+          enddate = piece.enddate
+        } else {
+          piece.enddate = piece.startDate
+          enddate = piece.startDate
+        }
+
+        if (piece.allDay) {
+          console.log('allDay', piece.allDay)
+          startTime = '00:00:00'
+          endTime = '23:59:59'
+        }
+
+        if (piece.dateType === 'repeat') {
+          piece.hasClones = true
+        }
+
+        piece.start = new Date(startDate + ' ' + startTime)
+        piece.end = new Date(enddate + ' ' + endTime)
+      }
     }
   }
-};
-
-function denormalizeDatesAndTimes(piece) {
-  // Parse our dates and times
-  let startTime = piece.startTime
-  let startDate = piece.startDate
-  let endTime = piece.endTime
-  let enddate
-
-  if (piece.dateType === 'consecutive') {
-    enddate = piece.enddate
-  } else {
-    piece.enddate = piece.startDate
-    enddate = piece.startDate
-  }
-
-  if (piece.allDay) {
-    startTime = '00:00:00'
-    endTime = '23:59:59'
-  }
-
-  if (piece.dateType === 'repeat') {
-    piece.hasClones = true
-  }
-
-  piece.start = new Date(startDate + ' ' + startTime)
-  piece.end = new Date(enddate + ' ' + endTime)
 }
-
 
 function getBundleModuleNames() {
   const source = path.join(__dirname, './modules/@apostrophecms');

@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const _ = require('@sailshq/lodash')
+const moment = require('moment')
 
 module.exports = {
   extend: '@apostrophecms/piece-type',

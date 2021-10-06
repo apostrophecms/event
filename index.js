@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('@sailshq/lodash')
-const moment = require('moment')
+const dayjs = require('dayjs')
 
 module.exports = {
   extend: '@apostrophecms/piece-type',
@@ -232,7 +232,7 @@ module.exports = {
         let addDates = []
 
         for (i = 1; i < repeat; i++) {
-          addDates.push(moment(piece.startDate).add(i, multiplier).format('YYYY-MM-DD'))
+          addDates.push(dayjs(piece.startDate).add(i, multiplier).format('YYYY-MM-DD'))
         }
 
         console.log('Dates', addDates)
@@ -249,7 +249,7 @@ module.exports = {
           eventCopy.slug = eventCopy.slug + '-' + newDate
           eventCopy.dateType = 'single'
           self.denormalizeDatesAndTimes(eventCopy)
-          console.log('New event', eventCopy)
+          console.log('New event on', eventCopy.startDate)
           self.insert(req, eventCopy, options)
         }
         console.log('Done')

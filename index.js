@@ -174,20 +174,19 @@ module.exports = {
       beforeSave: {
         async beforeSaveHandler(req, piece, options) {
           self.denormalizeDatesAndTimes(piece)
-          console.log('starttime', piece.startTime)
         }
       },
       afterInsert: {
-        async afterSaveHandler(req, piece, options) {
-          console.log('Date type', piece.dateType)
+        async afterInsertHandler(req, piece, options) {
           if (self._workflowPropagating) {
+            // if (self.isClone) {
             // Workflow is replicating this but also its existing
             // scheduled repetitions, don't re-replicate them and cause problems
+            // Don't allow replication of an event that is already a clone
             console.log('Already replicating')
             return
           }
           if (piece.dateType === 'repeat') {
-            console.log('Repeating event')
             await self.repeatEvent(req, piece, options)
             return
           } else {
@@ -215,7 +214,6 @@ module.exports = {
         }
 
         if (piece.allDay) {
-          console.log('allDay', piece.allDay)
           startTime = '00:00:00'
           endTime = '23:59:59'
         }
@@ -243,6 +241,7 @@ module.exports = {
         for (const newDate of addDates) {
           eventCopy = _.cloneDeep(piece)
           eventCopy._id = null
+          eventCopy.aposDocId = null
           eventCopy.parentId = piece._id
           eventCopy.isClone = true
           eventCopy.startDate = newDate
@@ -250,7 +249,7 @@ module.exports = {
           eventCopy.slug = eventCopy.slug + '-' + newDate
           eventCopy.dateType = 'single'
           self.denormalizeDatesAndTimes(eventCopy)
-          console.log('New event id', eventCopy._id)
+          console.log('New event', eventCopy)
           self.insert(req, eventCopy, options)
         }
         console.log('Done')

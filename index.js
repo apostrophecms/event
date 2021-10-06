@@ -12,30 +12,12 @@ module.exports = {
   options: {
     label: 'Event',
     pluralLabel: 'Events',
-    sort: { startDate: 1, startTime: 1 },
+    sort: { start: 1 },
   },
   columns: {
     add: {
-      startDate: {
-        label: 'Start Date'
-      },
-      startTime: {
-        label: 'Start Time'
-      }
-    }
-  },
-  options: {
-    label: 'Event',
-    pluralLabel: 'Events',
-    sort: { startDate: 1, startTime: 1 },
-  },
-  columns: {
-    add: {
-      startDate: {
-        label: 'Start Date'
-      },
-      startTime: {
-        label: 'Start Time'
+      start: {
+        label: 'Start'
       }
     }
   },
@@ -189,15 +171,36 @@ module.exports = {
 
   handlers(self, options) {
     return {
-
-      'beforeSave': {
+      beforeSave: {
         async beforeSaveHandler(req, piece, options) {
           self.denormalizeDatesAndTimes(piece)
           console.log('starttime', piece.startTime)
         }
       },
-
-      'denormalizeDatesAndTimes': function (piece) {
+      afterInsert: {
+        async afterSaveHandler(req, piece, options) {
+          console.log('Date type', piece.dateType)
+          if (self._workflowPropagating) {
+            // Workflow is replicating this but also its existing
+            // scheduled repetitions, don't re-replicate them and cause problems
+            console.log('Already replicating')
+            return
+          }
+          if (piece.dateType === 'repeat') {
+            console.log('Repeating event')
+            await self.repeatEvent(req, piece, options)
+            return
+          } else {
+            console.log('Non repeating event')
+            return
+          }
+        }
+      }
+    }
+  },
+  methods(self, options) {
+    return {
+      denormalizeDatesAndTimes(piece) {
         // Parse our dates and times
         let startTime = piece.startTime
         let startDate = piece.startDate
@@ -223,6 +226,35 @@ module.exports = {
 
         piece.start = new Date(startDate + ' ' + startTime)
         piece.end = new Date(enddate + ' ' + endTime)
+      },
+      repeatEvent(req, piece, options) {
+        let i
+        let repeat = parseInt(piece.repeatCount) + 1
+        let multiplier = piece.repeatInterval
+        let addDates = []
+
+        for (i = 1; i < repeat; i++) {
+          addDates.push(moment(piece.startDate).add(i, multiplier).format('YYYY-MM-DD'))
+        }
+
+        console.log('Dates', addDates)
+
+        let eventCopy
+        for (const newDate of addDates) {
+          eventCopy = _.cloneDeep(piece)
+          eventCopy._id = null
+          eventCopy.parentId = piece._id
+          eventCopy.isClone = true
+          eventCopy.startDate = newDate
+          eventCopy.endDate = newDate
+          eventCopy.slug = eventCopy.slug + '-' + newDate
+          eventCopy.dateType = 'single'
+          self.denormalizeDatesAndTimes(eventCopy)
+          console.log('New event id', eventCopy._id)
+          self.insert(req, eventCopy, options)
+        }
+        console.log('Done')
+        return
       }
     }
   }

@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const _ = require('@sailshq/lodash')
 const dayjs = require('dayjs')
 
 module.exports = {
@@ -235,11 +234,9 @@ module.exports = {
           addDates.push(dayjs(piece.startDate).add(i, multiplier).format('YYYY-MM-DD'))
         }
 
-        console.log('Dates', addDates)
-
         let eventCopy
         for (const newDate of addDates) {
-          eventCopy = _.cloneDeep(piece)
+          eventCopy = { ...piece }
           eventCopy._id = null
           eventCopy.aposDocId = null
           eventCopy.parentId = piece._id
@@ -249,10 +246,8 @@ module.exports = {
           eventCopy.slug = eventCopy.slug + '-' + newDate
           eventCopy.dateType = 'single'
           self.denormalizeDatesAndTimes(eventCopy)
-          console.log('New event on', eventCopy.startDate)
           self.insert(req, eventCopy, options)
         }
-        console.log('Done')
         return
       }
     }

@@ -171,26 +171,45 @@ module.exports = {
   handlers(self, options) {
     return {
       beforeSave: {
-        async beforeSaveHandler(req, piece, options) {
+        async denormalizeDateTimes(req, piece, options) {
           self.denormalizeDatesAndTimes(piece)
         }
       },
+      beforeInsert: {
+        setGroupId(req, piece, options) {
+          // Set groupId on parent if this is a repeating item
+          if (piece.dateType === 'repeat') {
+            piece.groupId = self.apos.util.generateId()
+          }
+        }
+      },
       afterInsert: {
-        async afterInsertHandler(req, piece, options) {
+        async createRepeatItems(req, piece, options) {
           if (self._workflowPropagating) {
-            // if (self.isClone) {
             // Workflow is replicating this but also its existing
             // scheduled repetitions, don't re-replicate them and cause problems
-            // Don't allow replication of an event that is already a clone
-            console.log('Already replicating')
             return
           }
-          if (piece.dateType === 'repeat') {
+          if (piece.dateType === 'repeat' && piece.aposMode === 'draft') {
             await self.repeatEvent(req, piece, options)
             return
           } else {
-            console.log('Non repeating event')
             return
+          }
+        }
+      },
+      afterPublish: {
+        async publishChildren(req, piece, options) {
+          // If this is a repeating item, publish its children also
+          console.log('dataType', piece.dataType)
+          if (piece.dataType === 'repeat') {
+            console.log('Publishing', piece)
+            const existing = await self.findChildren(req, {
+              groupId: piece.groupId
+            }).toArray()
+            console.log('Existing', existing)
+            // const pieceArray = self.findChildren(req, { groupId: piece.groupId })
+            // console.log('Pieces', pieceArray)
           }
         }
       }
@@ -224,7 +243,7 @@ module.exports = {
         piece.start = new Date(startDate + ' ' + startTime)
         piece.end = new Date(enddate + ' ' + endTime)
       },
-      repeatEvent(req, piece, options) {
+      async repeatEvent(req, piece, options) {
         let i
         let repeat = parseInt(piece.repeatCount) + 1
         let multiplier = piece.repeatInterval
@@ -239,16 +258,21 @@ module.exports = {
           eventCopy = { ...piece }
           eventCopy._id = null
           eventCopy.aposDocId = null
-          eventCopy.parentId = piece._id
           eventCopy.isClone = true
+          eventCopy.hasClones = false
           eventCopy.startDate = newDate
           eventCopy.endDate = newDate
           eventCopy.slug = eventCopy.slug + '-' + newDate
           eventCopy.dateType = 'single'
           self.denormalizeDatesAndTimes(eventCopy)
-          self.insert(req, eventCopy, options)
+          await self.insert(req, eventCopy, options)
         }
         return
+      },
+      async findChildren(req, criteria) {
+        console.log('Finding', criteria)
+        const query = self.find(req, criteria)
+        return query
       }
     }
   }

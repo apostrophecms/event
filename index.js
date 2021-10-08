@@ -178,8 +178,9 @@ module.exports = {
       beforeInsert: {
         setGroupId(req, piece, options) {
           // Set groupId on parent if this is a repeating item
-          if (piece.dateType === 'repeat') {
+          if (piece.dateType === 'repeat' && !piece.groupId && !self._workflowPropagating) {
             piece.groupId = self.apos.util.generateId()
+            console.log('Adding groupId', piece.groupId, 'for', piece._id)
           }
         }
       },
@@ -201,15 +202,14 @@ module.exports = {
       afterPublish: {
         async publishChildren(req, piece, options) {
           // If this is a repeating item, publish its children also
-          console.log('dataType', piece.dataType)
-          if (piece.dataType === 'repeat') {
-            console.log('Publishing', piece)
+          if (piece.published.dateType === 'repeat' && piece.firstTime) {
             const existing = await self.findChildren(req, {
-              groupId: piece.groupId
-            }).toArray()
-            console.log('Existing', existing)
-            // const pieceArray = self.findChildren(req, { groupId: piece.groupId })
-            // console.log('Pieces', pieceArray)
+              groupId: piece.draft.groupId
+            })
+            for (const child of existing) {
+              if (!child.isClone) continue // Skip the parent event
+              await self.publish(req, child, options)
+            }
           }
         }
       }
@@ -270,9 +270,10 @@ module.exports = {
         return
       },
       async findChildren(req, criteria) {
-        console.log('Finding', criteria)
-        const query = self.find(req, criteria)
-        return query
+        console.log('Finding', { ...criteria })
+        const query = await self.find(req, criteria)
+        const objArray = await query.toArray()
+        return objArray
       }
     }
   }

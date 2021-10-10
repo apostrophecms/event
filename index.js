@@ -180,7 +180,6 @@ module.exports = {
           // Set groupId on parent if this is a repeating item
           if (piece.dateType === 'repeat' && !piece.groupId && !self._workflowPropagating) {
             piece.groupId = self.apos.util.generateId()
-            console.log('Adding groupId', piece.groupId, 'for', piece._id)
           }
         }
       },

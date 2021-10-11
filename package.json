@@ -25,5 +25,8 @@
     "eslint-plugin-standard": "^4.0.1",
     "stylelint": "^13.7.1",
     "stylelint-config-apostrophe": "^1.0.0"
+  },
+  "dependencies": {
+    "dayjs": "^1.10.7"
   }
 }

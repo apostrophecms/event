@@ -20,27 +20,6 @@ module.exports = {
       }
     }
   },
-  filters: {
-    add: {
-      upcoming: {
-        type: 'select',
-        label: 'Upcoming',
-        choices: [
-          {
-            value: true,
-            label: 'Upcoming'
-          }, {
-            value: false,
-            label: 'Past'
-          }, {
-            value: null,
-            label: 'Both'
-          }
-        ],
-        def: true
-      }
-    }
-  },
   fields: {
     add: {
       startDate: {
@@ -155,7 +134,7 @@ module.exports = {
     group: {
       basics: {
         label: 'Basics',
-        fields: ['title', 'slug', 'description', 'startDate', 'allDay', 'startTime', 'endTime']
+        fields: ['title', 'slug', 'description', 'image', 'startDate', 'allDay', 'startTime', 'endTime']
       },
       advanced: {
         label: 'Advanced',
@@ -273,6 +252,56 @@ module.exports = {
         const query = await self.find(req, criteria)
         const objArray = await query.toArray()
         return objArray
+      }
+    }
+  },
+  queries(self, options) {
+    return {
+      builders: {
+        upcoming: {
+          label: 'Upcoming',
+          choices: [
+            {
+              value: true,
+              label: 'Upcoming'
+            }, {
+              value: false,
+              label: 'Past'
+            }, {
+              value: null,
+              label: 'Both'
+            }
+          ],
+          def: true,
+          async set() {
+            if (options.upcoming === null) {
+              return;
+            }
+
+            if (upcoming) {
+              self.and({
+                end: { $gt: new Date() }
+              })
+            } else {
+              self.and({
+                end: { $lte: new Date() }
+              })
+            }
+          }
+        }
+      },
+      methods: {
+        async returnList() {
+          await query.finalize();
+
+          const pipeline = [
+            { $match: query.get('criteria') }
+          ]
+          const result = await self.apos.doc.db.aggregate(pipeline)
+            .toArray();
+          console.log('Results', result)
+          return result;
+        }
       }
     }
   }

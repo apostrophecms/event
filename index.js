@@ -13,6 +13,26 @@ module.exports = {
     pluralLabel: 'Events',
     sort: { start: 1 },
   },
+  filters: {
+    add: {
+      upcoming: {
+        label: 'Upcoming',
+        choices: [
+          {
+            value: true,
+            label: 'Upcoming'
+          }, {
+            value: false,
+            label: 'Past'
+          }, {
+            value: null,
+            label: 'Both'
+          }
+        ],
+        def: true,
+      }
+    }
+  },
   columns: {
     add: {
       start: {
@@ -146,7 +166,6 @@ module.exports = {
       }
     }
   },
-
   handlers(self, options) {
     return {
       beforeSave: {
@@ -288,19 +307,6 @@ module.exports = {
               })
             }
           }
-        }
-      },
-      methods: {
-        async returnList() {
-          await query.finalize();
-
-          const pipeline = [
-            { $match: query.get('criteria') }
-          ]
-          const result = await self.apos.doc.db.aggregate(pipeline)
-            .toArray();
-          console.log('Results', result)
-          return result;
         }
       }
     }

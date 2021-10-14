@@ -278,14 +278,29 @@ module.exports = {
       builders: {
         upcoming: {
           async finalize() {
-            console.log('Query', query.upcoming)
-            // Make sure this filter was actually invoked first
-            if (query.get('upcoming')) {
-              if (query.upcoming === null) {
-                return;
-              }
+            // Navigation by year, month or day should
+            // trump this filter allowing you to
+            // browse the past
 
-              if (query.upcoming) {
+            if (query.get('year')) {
+              return;
+            }
+            if (query.get('month')) {
+              return;
+            }
+            if (query.get('day')) {
+              return;
+            }
+            if (query.get('start')) {
+              return;
+            }
+            if (query.get('end')) {
+              return;
+            }
+
+            if (query.get('upcoming')) {
+              const queryTerm = query.get('upcoming')
+              if (queryTerm) {
                 query.and({
                   end: { $gt: new Date() }
                 })
@@ -299,8 +314,6 @@ module.exports = {
           launder(value) {
             return self.apos.launder.boolean(value);
           },
-          // Always provides these two choices when requested, even if no docs
-          // match either value.
           choices() {
             return [
               { value: null, label: 'All' },

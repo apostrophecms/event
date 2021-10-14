@@ -267,45 +267,46 @@ module.exports = {
         return
       },
       async findChildren(req, criteria) {
-        console.log('Finding', { ...criteria })
         const query = await self.find(req, criteria)
         const objArray = await query.toArray()
         return objArray
       }
     }
   },
-  queries(self, options) {
+  queries(self, query) {
     return {
       builders: {
         upcoming: {
-          label: 'Upcoming',
-          choices: [
-            {
-              value: true,
-              label: 'Upcoming'
-            }, {
-              value: false,
-              label: 'Past'
-            }, {
-              value: null,
-              label: 'Both'
-            }
-          ],
-          def: true,
-          async set() {
-            if (options.upcoming === null) {
-              return;
-            }
+          async finalize() {
+            console.log('Query', query.upcoming)
+            // Make sure this filter was actually invoked first
+            if (query.get('upcoming')) {
+              if (query.upcoming === null) {
+                return;
+              }
 
-            if (upcoming) {
-              self.and({
-                end: { $gt: new Date() }
-              })
-            } else {
-              self.and({
-                end: { $lte: new Date() }
-              })
+              if (query.upcoming) {
+                query.and({
+                  end: { $gt: new Date() }
+                })
+              } else {
+                query.and({
+                  end: { $lte: new Date() }
+                })
+              }
             }
+          },
+          launder(value) {
+            return self.apos.launder.boolean(value);
+          },
+          // Always provides these two choices when requested, even if no docs
+          // match either value.
+          choices() {
+            return [
+              { value: null, label: 'All' },
+              { value: true, label: 'Upcoming' },
+              { value: false, label: 'Past' }
+            ];
           }
         }
       }

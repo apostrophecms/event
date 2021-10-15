@@ -285,20 +285,19 @@ module.exports = {
             // browse the past
 
             if (query.get('year')) {
-              console.log('Year filter blocking')
-              return;
+              return
             }
             if (query.get('month')) {
-              return;
+              return
             }
             if (query.get('day')) {
-              return;
+              return
             }
             if (query.get('start')) {
-              return;
+              return
             }
             if (query.get('end')) {
-              return;
+              return
             }
 
             if (query.get('upcoming')) {
@@ -326,16 +325,17 @@ module.exports = {
           }
         },
 
+        /*
         // Filter by year, in YYYY-MM-DD format. The event must
         // be taking place during that month (it might surround it).
         // Use of this filter cancels the upcoming filter
         year: {
           async finalize() {
             var year = query.get('year')
-            console.log('Year filtering', year)
-            if (year === null) {
+            if (!year) {
               return
             }
+            console.log('Year filtering', year)
 
             query.and({
               startDate: { $lte: year + '-12-31' },
@@ -363,7 +363,6 @@ module.exports = {
           }
         },
 
-        /*
         // Filter by day, in YYYY-MM-DD format. The event must
         // be taking place during that month (it might surround it).
         // Use of this filter cancels the upcoming filter
@@ -517,8 +516,8 @@ module.exports = {
             return s
           }
         },
-   
         */
+   
         /*
         // Accepted for bc, wraps the date filter
         date: {

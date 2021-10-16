@@ -303,8 +303,6 @@ module.exports = {
 
             const upcoming = query.get('upcoming')
 
-            console.log('upcoming', upcoming)
-
             if (upcoming === null) {
               return
             }
@@ -320,7 +318,7 @@ module.exports = {
             }
           },
           launder(value) {
-            return self.apos.launder.boolean(value)
+            return self.apos.launder.booleanOrNull(value)
           },
           choices() {
             return [

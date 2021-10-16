@@ -283,7 +283,7 @@ module.exports = {
             // Navigation by year, month or day should
             // trump this filter allowing you to
             // browse the past
-
+            /*
             if (query.get('year')) {
               return
             }
@@ -299,18 +299,24 @@ module.exports = {
             if (query.get('end')) {
               return
             }
+            */
 
-            if (query.get('upcoming')) {
-              const queryTerm = query.get('upcoming')
-              if (queryTerm) {
-                query.and({
-                  end: { $gt: new Date() }
-                })
-              } else {
-                query.and({
-                  end: { $lte: new Date() }
-                })
-              }
+            const upcoming = query.get('upcoming')
+
+            console.log('upcoming', upcoming)
+
+            if (upcoming === null) {
+              return
+            }
+
+            if (upcoming) {
+              query.and({
+                end: { $gt: new Date() }
+              })
+            } else {
+              query.and({
+                end: { $lte: new Date() }
+              })
             }
           },
           launder(value) {
@@ -318,7 +324,7 @@ module.exports = {
           },
           choices() {
             return [
-              { value: null, label: 'All' },
+              { value: null, label: 'Both' },
               { value: true, label: 'Upcoming' },
               { value: false, label: 'Past' }
             ]
@@ -517,7 +523,7 @@ module.exports = {
           }
         },
         */
-   
+
         /*
         // Accepted for bc, wraps the date filter
         date: {

@@ -19,19 +19,11 @@ module.exports = {
     add: {
       upcoming: {
         label: 'Upcoming',
-        choices: [
-          {
-            value: true,
-            label: 'Upcoming'
-          }, {
-            value: false,
-            label: 'Past'
-          }, {
-            value: null,
-            label: 'Both'
-          }
-        ],
-        def: true,
+        def: true
+      },
+      year: {
+        label: 'Year',
+        def: null
       }
     }
   },
@@ -283,7 +275,7 @@ module.exports = {
             // Navigation by year, month or day should
             // trump this filter allowing you to
             // browse the past
-            /*
+
             if (query.get('year')) {
               return
             }
@@ -299,7 +291,6 @@ module.exports = {
             if (query.get('end')) {
               return
             }
-            */
 
             const upcoming = query.get('upcoming')
 
@@ -329,17 +320,15 @@ module.exports = {
           }
         },
 
-        /*
         // Filter by year, in YYYY-MM-DD format. The event must
-        // be taking place during that month (it might surround it).
+        // be taking place during that year (it might surround it).
         // Use of this filter cancels the upcoming filter
         year: {
           async finalize() {
-            var year = query.get('year')
+            const year = query.get('year')
             if (!year) {
               return
             }
-            console.log('Year filtering', year)
 
             query.and({
               startDate: { $lte: year + '-12-31' },
@@ -355,67 +344,71 @@ module.exports = {
 
             return s
           },
-          choices: function (callback) {
-            return self.clone().upcoming(null).toDistinct('startDate', function (err, results) {
-              if (err) {
-                return callback(err)
+          async choices() {
+            const alldates = await query.clone().upcoming(null).toDistinct('startDate')
+
+            const years = [{ value: null, label: 'All' }]
+            for (const eachdate of alldates) {
+              const year = eachdate.substr(0, 4)
+              if (!years.find(e => e.value === year)) {
+                years.push({ value: year, label: year })
               }
-              return callback(null, _.uniq(_.each(results, function (value, key) {
-                results[key] = value.substr(0, 4)
-              })).sort().reverse())
-            })
+            }
+            return years
           }
         },
-
+        /*
         // Filter by day, in YYYY-MM-DD format. The event must
         // be taking place during that month (it might surround it).
         // Use of this filter cancels the upcoming filter
         month: {
           async finalize() {
-            var month = query.get('month');
-   
+            const month = query.get('month')
+  
             if (month === null) {
               return;
             }
-   
+  
             query.and({
               startDate: { $lte: month + '-31' },
               endDate: { $gte: month + '-01' }
-            });
+            })
           },
           launder: function (s) {
-            s = self.apos.launder.string(s);
-   
+            s = self.apos.launder.string(s)
+  
             if (!s.match(/^\d\d\d\d-\d\d$/)) {
-              return null;
+              return null
             }
-   
-            return s;
+  
+            return s
           },
           choices: function (callback) {
-            return self.clone().skip(0).limit(undefined).upcoming(null).projection({
+            return [ '02' ]
+  
+            return query.clone().skip(0).limit(undefined).upcoming(null).projection({
               startDate: 1,
               endDate: 1,
               dateType: 1
             }).toArray(function (err, results) {
               if (err) {
-                return callback(err);
+                return callback(err)
               }
-   
-              var months = [];
-   
+  
+              var months = []
+  
               _.each(results, function (result) {
                 if (!result.endDate || result.dateType === 'single' ||
                   result.startDate === result.endDate) {
                   months.push(result.startDate.substr(0, 7))
                   return
                 }
-   
+  
                 // Strategy credit to https://stackoverflow.com/a/43874192/888550
                 var firstMoment = dayjs(result.startDate)
                 var lastMoment = dayjs(result.endDate)
                 var interim = firstMoment.clone()
-   
+  
                 // Disabling rule because `interim` is modified by `.add()`.
                 // eslint-disable-next-line no-unmodified-loop-condition
                 while (lastMoment > interim ||
@@ -424,25 +417,26 @@ module.exports = {
                   interim.add(1, 'month')
                 }
               })
-   
+  
               months = _.uniq(months).sort().reverse()
-   
+  
               return callback(null, months)
             })
           }
         },
-   
+        */
+        /*
         // Filter by day, in YYYY-MM-DD format. The event must
         // be taking place during that day (it might surround it).
         // Use of this filter cancels the upcoming filter
         day: {
           finalize() {
             var day = query.get('day')
-   
+  
             if (day === null) {
               return
             }
-   
+  
             query.and({
               startDate: { $lte: day },
               endDate: { $gte: day }
@@ -450,15 +444,15 @@ module.exports = {
           },
           launder: function (s) {
             s = self.apos.launder.string(s)
-   
+  
             if (!s.match(fullDateRegex)) {
               return null
             }
-   
+  
             return s
           },
           choices: function (callback) {
-            return self.clone().upcoming(null).toDistinct('startDate', function (err, results) {
+            return query.clone().upcoming(null).toDistinct('startDate', function (err, results) {
               if (err) {
                 return callback(err)
               }
@@ -468,61 +462,59 @@ module.exports = {
             })
           }
         },
-   
+  
         // Filter for events that are active after a certain date, in YYYY-MM-DD format.
         // The event must end on or after that day.
         // Use of this filter cancels the upcoming filter
         start: {
           finalize() {
             var start = query.get('start')
-   
+  
             if (start === null) {
               return
             }
-   
+  
             query.and({
               endDate: { $gte: start }
             })
           },
           launder: function (s) {
             s = self.apos.launder.string(s)
-   
+  
             if (!s.match(fullDateRegex)) {
               return null
             }
-   
+  
             return s
           }
         },
-   
+  
         // Filter for events that are active up until a certain day, in YYYY-MM-DD format.
         // The event must start on or before that day.
         // Use of this filter cancels the upcoming filter
         end: {
           finalize() {
             var end = query.get('end')
-   
+  
             if (end === null) {
               return
             }
-   
+  
             query.and({
               startDate: { $lte: end }
             })
           },
           launder: function (s) {
             s = self.apos.launder.string(s)
-   
+  
             if (!s.match(fullDateRegex)) {
               return null
             }
-   
+  
             return s
           }
         },
-        */
-
-        /*
+  
         // Accepted for bc, wraps the date filter
         date: {
           finalize() {

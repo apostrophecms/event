@@ -19,12 +19,6 @@ module.exports = {
         label: 'Upcoming',
         def: true
       }
-      /*
-      year: {
-        label: 'Year',
-        def: null
-      }
-      */
     }
   },
   columns: {
@@ -95,7 +89,7 @@ module.exports = {
         ],
         def: 'single'
       },
-      enddate: {
+      endDate: {
         label: 'End date',
         type: 'date',
         if: {
@@ -152,7 +146,7 @@ module.exports = {
       },
       advanced: {
         label: 'Advanced',
-        fields: ['dateType', 'enddate', 'repeatInterval', 'repeatCount']
+        fields: ['dateType', 'endDate', 'repeatInterval', 'repeatCount']
       },
       meta: {
         label: 'Meta',
@@ -213,13 +207,13 @@ module.exports = {
         let startTime = piece.startTime
         let startDate = piece.startDate
         let endTime = piece.endTime
-        let enddate
+        let endDate
 
         if (piece.dateType === 'consecutive') {
-          enddate = piece.enddate
+          endDate = piece.endDate
         } else {
-          piece.enddate = piece.startDate
-          enddate = piece.startDate
+          piece.endDate = piece.startDate
+          endDate = piece.startDate
         }
 
         if (piece.allDay) {
@@ -232,7 +226,7 @@ module.exports = {
         }
 
         piece.start = new Date(startDate + ' ' + startTime)
-        piece.end = new Date(enddate + ' ' + endTime)
+        piece.end = new Date(endDate + ' ' + endTime)
       },
       async repeatEvent(req, piece, options) {
         let i
@@ -276,24 +270,6 @@ module.exports = {
             // trump this filter allowing you to
             // browse the past
 
-            /*
-            if (query.get('year')) {
-              return
-            }
-            if (query.get('month')) {
-              return
-            }
-            if (query.get('day')) {
-              return
-            }
-            if (query.get('start')) {
-              return
-            }
-            if (query.get('end')) {
-              return
-            }
-            */
-           
             const upcoming = query.get('upcoming')
 
             if (upcoming === null) {
@@ -310,6 +286,7 @@ module.exports = {
               })
             }
           },
+          /*
           launder(value) {
             return self.apos.launder.booleanOrNull(value)
           },
@@ -320,47 +297,8 @@ module.exports = {
               { value: false, label: 'Past' }
             ]
           }
-        },
-
-        // Filter by year, in YYYY-MM-DD format. The event must
-        // be taking place during that year (it might surround it).
-        // Use of this filter cancels the upcoming filter
-        /*
-        year: {
-          async finalize() {
-            const year = query.get('year')
-            if (!year) {
-              return
-            }
-
-            query.and({
-              startDate: { $lte: year + '-12-31' },
-              endDate: { $gte: year + '-01-01' }
-            })
-          },
-          launder: function (s) {
-            s = self.apos.launder.string(s)
-
-            if (!s.match(/^\d\d\d\d$/)) {
-              return null
-            }
-
-            return s
-          },
-          async choices() {
-            const alldates = await query.clone().upcoming(null).toDistinct('startDate')
-
-            const years = [{ value: null, label: 'All' }]
-            for (const eachdate of alldates) {
-              const year = eachdate.substr(0, 4)
-              if (!years.find(e => e.value === year)) {
-                years.push({ value: year, label: year })
-              }
-            }
-            return years
-          }
+          */
         }
-        */
       }
     }
   }

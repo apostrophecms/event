@@ -2,8 +2,6 @@ const fs = require('fs')
 const path = require('path')
 const dayjs = require('dayjs')
 
-const fullDateRegex = /^\d\d\d\d-\d\d-\d\d$/
-
 module.exports = {
   extend: '@apostrophecms/piece-type',
   bundle: {
@@ -20,11 +18,13 @@ module.exports = {
       upcoming: {
         label: 'Upcoming',
         def: true
-      },
+      }
+      /*
       year: {
         label: 'Year',
         def: null
       }
+      */
     }
   },
   columns: {
@@ -276,6 +276,7 @@ module.exports = {
             // trump this filter allowing you to
             // browse the past
 
+            /*
             if (query.get('year')) {
               return
             }
@@ -291,7 +292,8 @@ module.exports = {
             if (query.get('end')) {
               return
             }
-
+            */
+           
             const upcoming = query.get('upcoming')
 
             if (upcoming === null) {
@@ -323,6 +325,7 @@ module.exports = {
         // Filter by year, in YYYY-MM-DD format. The event must
         // be taking place during that year (it might surround it).
         // Use of this filter cancels the upcoming filter
+        /*
         year: {
           async finalize() {
             const year = query.get('year')
@@ -355,173 +358,6 @@ module.exports = {
               }
             }
             return years
-          }
-        },
-        /*
-        // Filter by day, in YYYY-MM-DD format. The event must
-        // be taking place during that month (it might surround it).
-        // Use of this filter cancels the upcoming filter
-        month: {
-          async finalize() {
-            const month = query.get('month')
-  
-            if (month === null) {
-              return;
-            }
-  
-            query.and({
-              startDate: { $lte: month + '-31' },
-              endDate: { $gte: month + '-01' }
-            })
-          },
-          launder: function (s) {
-            s = self.apos.launder.string(s)
-  
-            if (!s.match(/^\d\d\d\d-\d\d$/)) {
-              return null
-            }
-  
-            return s
-          },
-          choices: function (callback) {
-            return [ '02' ]
-  
-            return query.clone().skip(0).limit(undefined).upcoming(null).projection({
-              startDate: 1,
-              endDate: 1,
-              dateType: 1
-            }).toArray(function (err, results) {
-              if (err) {
-                return callback(err)
-              }
-  
-              var months = []
-  
-              _.each(results, function (result) {
-                if (!result.endDate || result.dateType === 'single' ||
-                  result.startDate === result.endDate) {
-                  months.push(result.startDate.substr(0, 7))
-                  return
-                }
-  
-                // Strategy credit to https://stackoverflow.com/a/43874192/888550
-                var firstMoment = dayjs(result.startDate)
-                var lastMoment = dayjs(result.endDate)
-                var interim = firstMoment.clone()
-  
-                // Disabling rule because `interim` is modified by `.add()`.
-                // eslint-disable-next-line no-unmodified-loop-condition
-                while (lastMoment > interim ||
-                  interim.format('M') === lastMoment.format('M')) {
-                  months.push(interim.format('YYYY-MM'))
-                  interim.add(1, 'month')
-                }
-              })
-  
-              months = _.uniq(months).sort().reverse()
-  
-              return callback(null, months)
-            })
-          }
-        },
-        */
-        /*
-        // Filter by day, in YYYY-MM-DD format. The event must
-        // be taking place during that day (it might surround it).
-        // Use of this filter cancels the upcoming filter
-        day: {
-          finalize() {
-            var day = query.get('day')
-  
-            if (day === null) {
-              return
-            }
-  
-            query.and({
-              startDate: { $lte: day },
-              endDate: { $gte: day }
-            })
-          },
-          launder: function (s) {
-            s = self.apos.launder.string(s)
-  
-            if (!s.match(fullDateRegex)) {
-              return null
-            }
-  
-            return s
-          },
-          choices: function (callback) {
-            return query.clone().upcoming(null).toDistinct('startDate', function (err, results) {
-              if (err) {
-                return callback(err)
-              }
-              results.sort()
-              results.reverse()
-              return callback(null, results)
-            })
-          }
-        },
-  
-        // Filter for events that are active after a certain date, in YYYY-MM-DD format.
-        // The event must end on or after that day.
-        // Use of this filter cancels the upcoming filter
-        start: {
-          finalize() {
-            var start = query.get('start')
-  
-            if (start === null) {
-              return
-            }
-  
-            query.and({
-              endDate: { $gte: start }
-            })
-          },
-          launder: function (s) {
-            s = self.apos.launder.string(s)
-  
-            if (!s.match(fullDateRegex)) {
-              return null
-            }
-  
-            return s
-          }
-        },
-  
-        // Filter for events that are active up until a certain day, in YYYY-MM-DD format.
-        // The event must start on or before that day.
-        // Use of this filter cancels the upcoming filter
-        end: {
-          finalize() {
-            var end = query.get('end')
-  
-            if (end === null) {
-              return
-            }
-  
-            query.and({
-              startDate: { $lte: end }
-            })
-          },
-          launder: function (s) {
-            s = self.apos.launder.string(s)
-  
-            if (!s.match(fullDateRegex)) {
-              return null
-            }
-  
-            return s
-          }
-        },
-  
-        // Accepted for bc, wraps the date filter
-        date: {
-          finalize() {
-            query.day(query.get('date'))
-          },
-          launder: function (s) {
-            return self.apos.launder.string(s)
           }
         }
         */

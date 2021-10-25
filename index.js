@@ -286,7 +286,6 @@ module.exports = {
               })
             }
           },
-          /*
           launder(value) {
             return self.apos.launder.booleanOrNull(value)
           },
@@ -297,7 +296,6 @@ module.exports = {
               { value: false, label: 'Past' }
             ]
           }
-          */
         }
       }
     }

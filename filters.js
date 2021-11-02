@@ -1,8 +1,9 @@
 module.exports = {
-    add: {
-        upcoming: {
-            label: 'Upcoming',
-            def: true
-        }
-    }
-}
+  add: {
+    upcoming: {
+      label: "Upcoming",
+      inputType: "select",
+      def: true,
+    },
+  },
+};

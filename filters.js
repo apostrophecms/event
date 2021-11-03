@@ -10,5 +10,15 @@ module.exports = {
       inputType: "select",
       def: null,
     },
+    month: {
+      label: "Month",
+      inputType: "select",
+      def: null,
+    },
+    day: {
+      label: "Days",
+      inputType: "select",
+      def: null,
+    },
   },
 };

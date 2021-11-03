@@ -36,7 +36,6 @@ module.exports = (self, query) => {
         },
       },
       // Filter by year, in YYYY-MM-DD format. The event must
-      // be taking place during that month (it might surround it).
       // be taking place during that year (it might surround it).
       // Use of this filter cancels the upcoming filter
       year: {
@@ -44,13 +43,20 @@ module.exports = (self, query) => {
         async finalize() {
           const year = query.get("year");
           if (!year) {
+            console.log("Year not found");
             return;
           }
           console.log("Year filtering", year);
 
           query.and({
-            startDate: { $lte: year + "-12-31" },
+            $and: [
+              { startDate: { $lte: year + "-12-31" } },
+              { startDate: { $gte: year + "-01-01" } },
+            ],
           });
+        },
+        launder(value) {
+          return self.apos.launder.string(value);
         },
         async choices() {
           const alldates = await query
@@ -64,8 +70,8 @@ module.exports = (self, query) => {
             if (!years.find((e) => e.value === year)) {
               years.push({ value: year, label: year });
             }
-            years.sort().reverse();
           }
+          years.sort().reverse();
           return years;
         },
       },

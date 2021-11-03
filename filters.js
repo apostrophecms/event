@@ -6,7 +6,7 @@ module.exports = {
       def: true,
     },
     year: {
-      label: "Upcoming",
+      label: "Year",
       inputType: "select",
       def: null,
     },

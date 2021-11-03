@@ -1,3 +1,5 @@
+const fullDateRegex = /^\d\d\d\d-\d\d-\d\d$/;
+
 module.exports = (self, query) => {
   return {
     builders: {
@@ -143,7 +145,6 @@ module.exports = (self, query) => {
         },
         launder: function(s) {
           s = self.apos.launder.string(s);
-          var fullDateRegex = /^\d\d\d\d-\d\d-\d\d$/;
           if (!s.match(fullDateRegex)) {
             return null;
           }
@@ -163,6 +164,69 @@ module.exports = (self, query) => {
           }
           days.sort().reverse();
           return days;
+        },
+      },
+      // Filter for events that are active after a certain date, in YYYY-MM-DD format.
+      // The event must end on or after that day.
+      // Use of this filter cancels the upcoming filter
+      start: {
+        def: null,
+        safeFor: "public",
+        finalize: function() {
+          var start = query.get("start");
+
+          if (start === null) {
+            return;
+          }
+
+          query.and({
+            endDate: { $gte: start },
+          });
+        },
+        launder: function(s) {
+          s = self.apos.launder.string(s);
+
+          if (!s.match(fullDateRegex)) {
+            return null;
+          }
+
+          return s;
+        },
+      },
+
+      // Filter for events that are active up until a certain day, in YYYY-MM-DD format.
+      // The event must start on or before that day.
+      // Use of this filter cancels the upcoming filter
+      end: {
+        def: null,
+        finalize: function() {
+          var end = query.get("end");
+
+          if (end === null) {
+            return;
+          }
+
+          query.and({
+            startDate: { $lte: end },
+          });
+        },
+        launder: function(s) {
+          s = self.apos.launder.string(s);
+
+          if (!s.match(fullDateRegex)) {
+            return null;
+          }
+
+          return s;
+        },
+      },
+      date: {
+        def: null,
+        finalize: function() {
+          query.day(query.get("date"));
+        },
+        launder: function(s) {
+          return self.apos.launder.string(s);
         },
       },
     },

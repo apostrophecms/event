@@ -2,7 +2,7 @@ module.exports = (self, query) => {
   return {
     builders: {
       upcoming: {
-        def: true,
+        def: null,
         async finalize() {
           // Navigation by year, month or day should
           // trump this filter allowing you to

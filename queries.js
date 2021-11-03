@@ -10,17 +10,17 @@ module.exports = (self, query) => {
           // trump this filter allowing you to
           // browse the past
 
-          if (query.get("year")) {
+          if (query.get('year')) {
             return;
           }
-          if (query.get("month")) {
+          if (query.get('month')) {
             return;
           }
-          if (query.get("day")) {
+          if (query.get('day')) {
             return;
           }
 
-          const upcoming = query.get("upcoming");
+          const upcoming = query.get('upcoming');
 
           if (upcoming === null) {
             return;
@@ -28,11 +28,11 @@ module.exports = (self, query) => {
 
           if (upcoming) {
             query.and({
-              end: { $gt: new Date() },
+              end: { $gt: new Date() }
             });
           } else {
             query.and({
-              end: { $lte: new Date() },
+              end: { $lte: new Date() }
             });
           }
         },
@@ -41,11 +41,11 @@ module.exports = (self, query) => {
         },
         choices() {
           return [
-            { value: null, label: "Both" },
-            { value: true, label: "Upcoming" },
-            { value: false, label: "Past" },
+            { value: null, label: 'Both' },
+            { value: true, label: 'Upcoming' },
+            { value: false, label: 'Past' }
           ];
-        },
+        }
       },
       // Filter by year, in YYYY-MM-DD format. The event must
       // be taking place during that year (it might surround it).
@@ -53,16 +53,16 @@ module.exports = (self, query) => {
       year: {
         def: null,
         async finalize() {
-          const year = query.get("year");
+          const year = query.get('year');
           if (!year) {
             return;
           }
 
           query.and({
             $and: [
-              { startDate: { $lte: year + "-12-31" } },
-              { startDate: { $gte: year + "-01-01" } },
-            ],
+              { startDate: { $lte: year + '-12-31' } },
+              { startDate: { $gte: year + '-01-01' } }
+            ]
           });
         },
         launder(value) {
@@ -72,18 +72,18 @@ module.exports = (self, query) => {
           const alldates = await query
             .clone()
             .upcoming(null)
-            .toDistinct("startDate");
+            .toDistinct('startDate');
 
-          const years = [{ value: null, label: "All" }];
+          const years = [{ value: null, label: 'All' }];
           for (const eachdate of alldates) {
             const year = eachdate.substr(0, 4);
-            if (!years.find((e) => e.value === year)) {
+            if (!years.find(e => e.value === year)) {
               years.push({ value: year, label: year });
             }
           }
           years.sort().reverse();
           return years;
-        },
+        }
       },
       // Filter by month, in YYYY-MM- format, using regex. The event must
       // be taking place during that month (it might surround it).
@@ -91,15 +91,15 @@ module.exports = (self, query) => {
       month: {
         def: null,
         async finalize() {
-          const month = query.get("month");
+          const month = query.get('month');
 
           if (!month) {
             return;
           }
-          var re = new RegExp(`${month}-`, "gi");
+          const re = new RegExp(`${month}-`, 'gi');
 
           query.and({
-            $and: [{ startDate: re }, { endDate: re }],
+            $and: [{ startDate: re }, { endDate: re }]
           });
         },
         launder: function(s) {
@@ -113,18 +113,18 @@ module.exports = (self, query) => {
           const alldates = await query
             .clone()
             .upcoming(null)
-            .toDistinct("startDate");
+            .toDistinct('startDate');
 
-          const months = [{ value: null, label: "All" }];
+          const months = [{ value: null, label: 'All' }];
           for (const eachdate of alldates) {
             const month = eachdate.substr(0, 7);
-            if (!months.find((e) => e.value === month)) {
+            if (!months.find(e => e.value === month)) {
               months.push({ value: month, label: month });
             }
           }
           months.sort().reverse();
           return months;
-        },
+        }
       },
       // Filter by month, in YYYY-MM-DD format, using regex. The event must
       // be taking place during that month (it might surround it).
@@ -132,15 +132,15 @@ module.exports = (self, query) => {
       day: {
         def: null,
         async finalize() {
-          const day = query.get("day");
+          const day = query.get('day');
 
           if (!day) {
             return;
           }
-          var re = new RegExp(`${day}`, "gi");
+          const re = new RegExp(`${day}`, 'gi');
 
           query.and({
-            $and: [{ startDate: re }, { endDate: re }],
+            $and: [{ startDate: re }, { endDate: re }]
           });
         },
         launder: function(s) {
@@ -154,33 +154,33 @@ module.exports = (self, query) => {
           const alldates = await query
             .clone()
             .upcoming(null)
-            .toDistinct("startDate");
+            .toDistinct('startDate');
 
-          const days = [{ value: null, label: "All" }];
+          const days = [{ value: null, label: 'All' }];
           for (const eachdate of alldates) {
-            if (!days.find((e) => e.value === eachdate)) {
+            if (!days.find(e => e.value === eachdate)) {
               days.push({ value: eachdate, label: eachdate });
             }
           }
           days.sort().reverse();
           return days;
-        },
+        }
       },
       // Filter for events that are active after a certain date, in YYYY-MM-DD format.
       // The event must end on or after that day.
       // Use of this filter cancels the upcoming filter
       start: {
         def: null,
-        safeFor: "public",
+        safeFor: 'public',
         finalize: function() {
-          var start = query.get("start");
+          const start = query.get('start');
 
           if (start === null) {
             return;
           }
 
           query.and({
-            endDate: { $gte: start },
+            endDate: { $gte: start }
           });
         },
         launder: function(s) {
@@ -191,7 +191,7 @@ module.exports = (self, query) => {
           }
 
           return s;
-        },
+        }
       },
 
       // Filter for events that are active up until a certain day, in YYYY-MM-DD format.
@@ -200,14 +200,14 @@ module.exports = (self, query) => {
       end: {
         def: null,
         finalize: function() {
-          var end = query.get("end");
+          const end = query.get('end');
 
           if (end === null) {
             return;
           }
 
           query.and({
-            startDate: { $lte: end },
+            startDate: { $lte: end }
           });
         },
         launder: function(s) {
@@ -218,17 +218,17 @@ module.exports = (self, query) => {
           }
 
           return s;
-        },
+        }
       },
       date: {
         def: null,
         finalize: function() {
-          query.day(query.get("date"));
+          query.day(query.get('date'));
         },
         launder: function(s) {
           return self.apos.launder.string(s);
-        },
-      },
-    },
+        }
+      }
+    }
   };
 };

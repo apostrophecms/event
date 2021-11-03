@@ -25,5 +25,12 @@
     "eslint-plugin-standard": "^4.0.1",
     "stylelint": "^13.7.1",
     "stylelint-config-apostrophe": "^1.0.0"
+  },
+  "prettier": {
+    "trailingComma": "none",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "bracketSpacing": true
   }
 }

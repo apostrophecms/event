@@ -1,182 +1,182 @@
-const fs = require("fs");
-const path = require("path");
-const dayjs = require("dayjs");
+const fs = require('fs');
+const path = require('path');
+const dayjs = require('dayjs');
 
-const filters = require("./filters");
-const queries = require("./queries");
+const filters = require('./filters');
+const queries = require('./queries');
 
 module.exports = {
-  extend: "@apostrophecms/piece-type",
+  extend: '@apostrophecms/piece-type',
   bundle: {
-    directory: "modules",
-    modules: getBundleModuleNames(),
+    directory: 'modules',
+    modules: getBundleModuleNames()
   },
   options: {
-    label: "Event",
-    pluralLabel: "Events",
-    sort: { start: 1 },
+    label: 'Event',
+    pluralLabel: 'Events',
+    sort: { start: 1 }
   },
   columns: {
     add: {
       start: {
-        label: "Start",
-      },
-    },
+        label: 'Start'
+      }
+    }
   },
   fields: {
     add: {
       startDate: {
-        label: "Start date",
-        type: "date",
-        required: true,
+        label: 'Start date',
+        type: 'date',
+        required: true
       },
       allDay: {
-        label: "Is this an all day event?",
-        type: "boolean",
+        label: 'Is this an all day event?',
+        type: 'boolean',
         choices: [
           {
-            label: "Yes",
-            value: true,
+            label: 'Yes',
+            value: true
           },
           {
-            label: "No",
+            label: 'No',
             value: false,
-            showFields: ["startTime", "endTime"],
-          },
+            showFields: ['startTime', 'endTime']
+          }
         ],
-        def: false,
+        def: false
       },
       startTime: {
-        label: "Start time",
-        type: "time",
-        def: "09:00 AM",
+        label: 'Start time',
+        type: 'time',
+        def: '09:00 AM',
         required: true,
         if: {
-          allDay: false,
-        },
+          allDay: false
+        }
       },
       endTime: {
-        label: "End time",
-        type: "time",
-        def: "05:30 PM",
+        label: 'End time',
+        type: 'time',
+        def: '05:30 PM',
         required: true,
         if: {
-          allDay: false,
-        },
+          allDay: false
+        }
       },
       dateType: {
-        label: "What type of event is this?",
+        label: 'What type of event is this?',
         help:
-          "Select if the event is on a single day, consecutive days, or repeats.",
-        type: "select",
+          'Select if the event is on a single day, consecutive days, or repeats.',
+        type: 'select',
         choices: [
           {
-            label: "Single Day",
-            value: "single",
+            label: 'Single Day',
+            value: 'single'
           },
           {
-            label: "Consecutive Days",
-            value: "consecutive",
+            label: 'Consecutive Days',
+            value: 'consecutive'
           },
           {
-            label: "Recurring",
-            value: "repeat",
-          },
+            label: 'Recurring',
+            value: 'repeat'
+          }
         ],
-        def: "single",
+        def: 'single'
       },
       endDate: {
-        label: "End date",
-        type: "date",
+        label: 'End date',
+        type: 'date',
         if: {
-          dateType: "consecutive",
-        },
+          dateType: 'consecutive'
+        }
       },
       repeatInterval: {
-        label: "How often does the event repeat?",
-        type: "select",
+        label: 'How often does the event repeat?',
+        type: 'select',
         choices: [
           {
-            label: "Every week",
-            value: "weeks",
+            label: 'Every week',
+            value: 'weeks'
           },
           {
-            label: "Every month",
-            value: "months",
-          },
+            label: 'Every month',
+            value: 'months'
+          }
         ],
         if: {
-          dateType: "repeat",
-        },
+          dateType: 'repeat'
+        }
       },
       repeatCount: {
-        label: "How many times does it repeat?",
-        type: "integer",
+        label: 'How many times does it repeat?',
+        type: 'integer',
         def: 1,
         if: {
-          dateType: "repeat",
-        },
+          dateType: 'repeat'
+        }
       },
       description: {
-        type: "string",
-        label: "Description",
+        type: 'string',
+        label: 'Description',
         textarea: true,
-        required: true,
+        required: true
       },
       image: {
-        label: "Headline photo",
-        type: "area",
+        label: 'Headline photo',
+        type: 'area',
         options: {
           max: 1,
           widgets: {
-            "@apostrophecms/image": {},
-          },
+            '@apostrophecms/image': {}
+          }
         },
-        required: false,
-      },
+        required: false
+      }
     },
     group: {
       basics: {
-        label: "Basics",
+        label: 'Basics',
         fields: [
-          "title",
-          "slug",
-          "description",
-          "image",
-          "startDate",
-          "allDay",
-          "startTime",
-          "endTime",
-        ],
+          'title',
+          'slug',
+          'description',
+          'image',
+          'startDate',
+          'allDay',
+          'startTime',
+          'endTime'
+        ]
       },
       advanced: {
-        label: "Advanced",
-        fields: ["dateType", "endDate", "repeatInterval", "repeatCount"],
+        label: 'Advanced',
+        fields: ['dateType', 'endDate', 'repeatInterval', 'repeatCount']
       },
       meta: {
-        label: "Meta",
-        fields: ["tags", "published"],
-      },
-    },
+        label: 'Meta',
+        fields: ['tags', 'published']
+      }
+    }
   },
   handlers(self, options) {
     return {
       beforeSave: {
         async denormalizeDateTimes(req, piece, options) {
           self.denormalizeDatesAndTimes(piece);
-        },
+        }
       },
       beforeInsert: {
         setGroupId(req, piece, options) {
           // Set groupId on parent if this is a repeating item
           if (
-            piece.dateType === "repeat" &&
+            piece.dateType === 'repeat' &&
             !piece.groupId &&
             !self._workflowPropagating
           ) {
             piece.groupId = self.apos.util.generateId();
           }
-        },
+        }
       },
       afterInsert: {
         async createRepeatItems(req, piece, options) {
@@ -185,28 +185,25 @@ module.exports = {
             // scheduled repetitions, don't re-replicate them and cause problems
             return;
           }
-          if (piece.dateType === "repeat" && piece.aposMode === "draft") {
+          if (piece.dateType === 'repeat' && piece.aposMode === 'draft') {
             await self.repeatEvent(req, piece, options);
-            return;
-          } else {
-            return;
           }
-        },
+        }
       },
       afterPublish: {
         async publishChildren(req, piece, options) {
           // If this is a repeating item, publish its children also
-          if (piece.published.dateType === "repeat" && piece.firstTime) {
+          if (piece.published.dateType === 'repeat' && piece.firstTime) {
             const existing = await self.findChildren(req, {
-              groupId: piece.draft.groupId,
+              groupId: piece.draft.groupId
             });
             for (const child of existing) {
               if (!child.isClone) continue; // Skip the parent event
               await self.publish(req, child, options);
             }
           }
-        },
-      },
+        }
+      }
     };
   },
   methods(self, options) {
@@ -214,11 +211,11 @@ module.exports = {
       denormalizeDatesAndTimes(piece) {
         // Parse our dates and times
         let startTime = piece.startTime;
-        let startDate = piece.startDate;
+        const startDate = piece.startDate;
         let endTime = piece.endTime;
         let endDate;
 
-        if (piece.dateType === "consecutive") {
+        if (piece.dateType === 'consecutive') {
           endDate = piece.endDate;
         } else {
           piece.endDate = piece.startDate;
@@ -226,28 +223,28 @@ module.exports = {
         }
 
         if (piece.allDay) {
-          startTime = "00:00:00";
-          endTime = "23:59:59";
+          startTime = '00:00:00';
+          endTime = '23:59:59';
         }
 
-        if (piece.dateType === "repeat") {
+        if (piece.dateType === 'repeat') {
           piece.hasClones = true;
         }
 
-        piece.start = new Date(startDate + " " + startTime);
-        piece.end = new Date(endDate + " " + endTime);
+        piece.start = new Date(startDate + ' ' + startTime);
+        piece.end = new Date(endDate + ' ' + endTime);
       },
       async repeatEvent(req, piece, options) {
         let i;
-        let repeat = parseInt(piece.repeatCount) + 1;
-        let multiplier = piece.repeatInterval;
-        let addDates = [];
+        const repeat = parseInt(piece.repeatCount) + 1;
+        const multiplier = piece.repeatInterval;
+        const addDates = [];
 
         for (i = 1; i < repeat; i++) {
           addDates.push(
             dayjs(piece.startDate)
               .add(i, multiplier)
-              .format("YYYY-MM-DD")
+              .format('YYYY-MM-DD')
           );
         }
 
@@ -260,28 +257,27 @@ module.exports = {
           eventCopy.hasClones = false;
           eventCopy.startDate = newDate;
           eventCopy.endDate = newDate;
-          eventCopy.slug = eventCopy.slug + "-" + newDate;
-          eventCopy.dateType = "single";
+          eventCopy.slug = eventCopy.slug + '-' + newDate;
+          eventCopy.dateType = 'single';
           self.denormalizeDatesAndTimes(eventCopy);
           await self.insert(req, eventCopy, options);
         }
-        return;
       },
       async findChildren(req, criteria) {
         const query = await self.find(req, criteria);
         const objArray = await query.toArray();
         return objArray;
-      },
+      }
     };
   },
   filters,
-  queries,
+  queries
 };
 
 function getBundleModuleNames() {
-  const source = path.join(__dirname, "./modules/@apostrophecms");
+  const source = path.join(__dirname, './modules/@apostrophecms');
   return fs
     .readdirSync(source, { withFileTypes: true })
-    .filter((dirent) => dirent.isDirectory())
-    .map((dirent) => `@apostrophecms/${dirent.name}`);
+    .filter(dirent => dirent.isDirectory())
+    .map(dirent => `@apostrophecms/${dirent.name}`);
 }

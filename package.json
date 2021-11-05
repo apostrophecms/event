@@ -1,7 +1,7 @@
 {
-  "name": "@bulldoguk/pphevent",
+  "name": "@apostrophecms/event",
   "version": "1.0.0",
-  "description": "Converts Apos3 events to Tailwind, adds event image",
+  "description": "A template for creating an ApostropheCMS 3 module.",
   "main": "index.js",
   "scripts": {
     "lint": "npm run eslint",
@@ -10,8 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bulldoguk/pphevent.git"
+    "url": "git+https://github.com/apostrophecms/event.git"
   },
+  "homepage": "https://github.com/apostrophecms/event#readme",
   "author": "Apostrophe Technologies",
   "license": "MIT",
   "dependencies": {

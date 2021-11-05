@@ -122,17 +122,6 @@ module.exports = {
         label: 'Description',
         textarea: true,
         required: true
-      },
-      image: {
-        label: 'Headline photo',
-        type: 'area',
-        options: {
-          max: 1,
-          widgets: {
-            '@apostrophecms/image': {}
-          }
-        },
-        required: false
       }
     },
     group: {
@@ -142,7 +131,6 @@ module.exports = {
           'title',
           'slug',
           'description',
-          'image',
           'startDate',
           'allDay',
           'startTime',
@@ -162,7 +150,7 @@ module.exports = {
   handlers(self, options) {
     return {
       beforeSave: {
-        async denormalizeDateTimes(req, piece, options) {
+        async denormalizeDatesAndTimes(req, piece, options) {
           self.denormalizeDatesAndTimes(piece);
         }
       },
@@ -172,7 +160,7 @@ module.exports = {
           if (
             piece.dateType === 'repeat' &&
             !piece.groupId &&
-            !self._workflowPropagating
+            piece.aposMode === 'draft'
           ) {
             piece.groupId = self.apos.util.generateId();
           }
@@ -180,7 +168,7 @@ module.exports = {
       },
       afterInsert: {
         async createRepeatItems(req, piece, options) {
-          if (self._workflowPropagating) {
+          if (piece.aposMode === 'draft') {
             // Workflow is replicating this but also its existing
             // scheduled repetitions, don't re-replicate them and cause problems
             return;
@@ -194,11 +182,15 @@ module.exports = {
         async publishChildren(req, piece, options) {
           // If this is a repeating item, publish its children also
           if (piece.published.dateType === 'repeat' && piece.firstTime) {
-            const existing = await self.findChildren(req, {
-              groupId: piece.draft.groupId
-            });
+            const existing = await self
+              .find(req, {
+                groupId: piece.draft.groupId
+              })
+              .toArray();
             for (const child of existing) {
-              if (!child.isClone) continue; // Skip the parent event
+              if (!child.isClone) {
+                continue;
+              } // Skip the parent event
               await self.publish(req, child, options);
             }
           }
@@ -236,11 +228,11 @@ module.exports = {
       },
       async repeatEvent(req, piece, options) {
         let i;
-        const repeat = parseInt(piece.repeatCount) + 1;
+        const repeat = parseInt(piece.repeatCount);
         const multiplier = piece.repeatInterval;
         const addDates = [];
 
-        for (i = 1; i < repeat; i++) {
+        for (i = 1; i <= repeat; i++) {
           addDates.push(
             dayjs(piece.startDate)
               .add(i, multiplier)
@@ -262,11 +254,6 @@ module.exports = {
           self.denormalizeDatesAndTimes(eventCopy);
           await self.insert(req, eventCopy, options);
         }
-      },
-      async findChildren(req, criteria) {
-        const query = await self.find(req, criteria);
-        const objArray = await query.toArray();
-        return objArray;
       }
     };
   },

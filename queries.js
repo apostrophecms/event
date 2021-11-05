@@ -5,7 +5,8 @@ module.exports = (self, query) => {
     builders: {
       upcoming: {
         def: null,
-        async finalize() {
+        safeFor: 'public',
+        finalize() {
           // Navigation by year, month or day should
           // trump this filter allowing you to
           // browse the past
@@ -52,7 +53,8 @@ module.exports = (self, query) => {
       // Use of this filter cancels the upcoming filter
       year: {
         def: null,
-        async finalize() {
+        safeFor: 'public',
+        finalize() {
           const year = query.get('year');
           if (!year) {
             return;
@@ -90,7 +92,8 @@ module.exports = (self, query) => {
       // Use of this filter cancels the upcoming filter
       month: {
         def: null,
-        async finalize() {
+        safeFor: 'public',
+        finalize() {
           const month = query.get('month');
 
           if (!month) {
@@ -102,7 +105,7 @@ module.exports = (self, query) => {
             $and: [{ startDate: re }, { endDate: re }]
           });
         },
-        launder: function(s) {
+        launder(s) {
           s = self.apos.launder.string(s);
           if (!s.match(/^\d\d\d\d-\d\d$/)) {
             return null;
@@ -131,7 +134,8 @@ module.exports = (self, query) => {
       // Use of this filter cancels the upcoming filter
       day: {
         def: null,
-        async finalize() {
+        safeFor: 'public',
+        finalize() {
           const day = query.get('day');
 
           if (!day) {
@@ -143,7 +147,7 @@ module.exports = (self, query) => {
             $and: [{ startDate: re }, { endDate: re }]
           });
         },
-        launder: function(s) {
+        launder(s) {
           s = self.apos.launder.string(s);
           if (!s.match(fullDateRegex)) {
             return null;
@@ -172,7 +176,7 @@ module.exports = (self, query) => {
       start: {
         def: null,
         safeFor: 'public',
-        finalize: function() {
+        finalize() {
           const start = query.get('start');
 
           if (start === null) {
@@ -183,7 +187,7 @@ module.exports = (self, query) => {
             endDate: { $gte: start }
           });
         },
-        launder: function(s) {
+        launder(s) {
           s = self.apos.launder.string(s);
 
           if (!s.match(fullDateRegex)) {
@@ -199,7 +203,8 @@ module.exports = (self, query) => {
       // Use of this filter cancels the upcoming filter
       end: {
         def: null,
-        finalize: function() {
+        safeFor: 'public',
+        finalize() {
           const end = query.get('end');
 
           if (end === null) {
@@ -210,7 +215,7 @@ module.exports = (self, query) => {
             startDate: { $lte: end }
           });
         },
-        launder: function(s) {
+        launder(s) {
           s = self.apos.launder.string(s);
 
           if (!s.match(fullDateRegex)) {
@@ -222,10 +227,11 @@ module.exports = (self, query) => {
       },
       date: {
         def: null,
-        finalize: function() {
+        safeFor: 'public',
+        finalize() {
           query.day(query.get('date'));
         },
-        launder: function(s) {
+        launder(s) {
           return self.apos.launder.string(s);
         }
       }

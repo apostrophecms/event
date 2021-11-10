@@ -168,9 +168,9 @@ module.exports = {
       },
       afterInsert: {
         async createRepeatItems(req, piece, options) {
-          if (piece.aposMode === 'draft') {
+          if (piece.isClone) {
             // Workflow is replicating this but also its existing
-            // scheduled repetitions, don't re-replicate them and cause problems
+            // scheduled repetitions, don't re-replicate clones and cause problems
             return;
           }
           if (piece.dateType === 'repeat' && piece.aposMode === 'draft') {
@@ -180,8 +180,8 @@ module.exports = {
       },
       afterPublish: {
         async publishChildren(req, piece, options) {
-          // If this is a repeating item, publish its children also
-          if (piece.published.dateType === 'repeat' && options.firstTime) {
+          // If this is a repeating item and firstTime is set, publish its children also
+          if (piece.published.dateType === 'repeat' && piece.firstTime) {
             const existing = await self
               .find(req, {
                 groupId: piece.draft.groupId

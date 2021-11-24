@@ -8,3 +8,6 @@ This bundle is intended to provide event functionality (concerts, recurring webi
 - [x] Index page default template should use H2 and H3 headings for sections (filters and events) and a paragraph or `date` for the date.
 - [ ] Index page should have pagination.
 - [ ] needs localization keys
+- [ ] Make event description optional
+- [ ] Change `groupId` to `eventGroupId`
+- [ ] Fill out the README

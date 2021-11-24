@@ -42,9 +42,18 @@ module.exports = (self, query) => {
         },
         choices() {
           return [
-            { value: null, label: 'Both' },
-            { value: true, label: 'Upcoming' },
-            { value: false, label: 'Past' }
+            {
+              value: null,
+              label: 'Both'
+            },
+            {
+              value: true,
+              label: 'Upcoming'
+            },
+            {
+              value: false,
+              label: 'Past'
+            }
           ];
         }
       },
@@ -76,11 +85,17 @@ module.exports = (self, query) => {
             .upcoming(null)
             .toDistinct('startDate');
 
-          const years = [{ value: null, label: 'All' }];
+          const years = [ {
+            value: null,
+            label: 'All'
+          } ];
           for (const eachdate of alldates) {
             const year = eachdate.substr(0, 4);
             if (!years.find(e => e.value === year)) {
-              years.push({ value: year, label: year });
+              years.push({
+                value: year,
+                label: year
+              });
             }
           }
           years.sort().reverse();
@@ -102,11 +117,12 @@ module.exports = (self, query) => {
           const re = new RegExp(`${month}-`, 'gi');
 
           query.and({
-            $and: [{ startDate: re }, { endDate: re }]
+            $and: [ { startDate: re }, { endDate: re } ]
           });
         },
         launder(s) {
           s = self.apos.launder.string(s);
+
           if (!s.match(/^\d\d\d\d-\d\d$/)) {
             return null;
           }
@@ -118,11 +134,17 @@ module.exports = (self, query) => {
             .upcoming(null)
             .toDistinct('startDate');
 
-          const months = [{ value: null, label: 'All' }];
+          const months = [ {
+            value: null,
+            label: 'All'
+          } ];
           for (const eachdate of alldates) {
             const month = eachdate.substr(0, 7);
             if (!months.find(e => e.value === month)) {
-              months.push({ value: month, label: month });
+              months.push({
+                value: month,
+                label: month
+              });
             }
           }
           months.sort().reverse();
@@ -144,11 +166,12 @@ module.exports = (self, query) => {
           const re = new RegExp(`${day}`, 'gi');
 
           query.and({
-            $and: [{ startDate: re }, { endDate: re }]
+            $and: [ { startDate: re }, { endDate: re } ]
           });
         },
         launder(s) {
           s = self.apos.launder.string(s);
+
           if (!s.match(fullDateRegex)) {
             return null;
           }
@@ -160,10 +183,16 @@ module.exports = (self, query) => {
             .upcoming(null)
             .toDistinct('startDate');
 
-          const days = [{ value: null, label: 'All' }];
+          const days = [ {
+            value: null,
+            label: 'All'
+          } ];
           for (const eachdate of alldates) {
             if (!days.find(e => e.value === eachdate)) {
-              days.push({ value: eachdate, label: eachdate });
+              days.push({
+                value: eachdate,
+                label: eachdate
+              });
             }
           }
           days.sort().reverse();

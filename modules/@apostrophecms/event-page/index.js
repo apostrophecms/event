@@ -1,6 +1,11 @@
 module.exports = {
   extend: '@apostrophecms/piece-page-type',
   options: {
-    piecesFilters: [{ name: 'year' }, { name: 'month' }, { name: 'day' }]
+    label: 'Event Page',
+    piecesFilters: [
+      { name: 'year' },
+      { name: 'month' },
+      { name: 'day' }
+    ]
   }
 };

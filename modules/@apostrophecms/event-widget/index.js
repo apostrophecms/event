@@ -1,3 +1,3 @@
 module.exports = {
-  extend: '@apostrophecms/widget-type',
+  extend: '@apostrophecms/widget-type'
 };

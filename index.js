@@ -41,7 +41,7 @@ module.exports = {
           {
             label: 'No',
             value: false,
-            showFields: ['startTime', 'endTime']
+            showFields: [ 'startTime', 'endTime' ]
           }
         ],
         def: false
@@ -139,11 +139,11 @@ module.exports = {
       },
       advanced: {
         label: 'Advanced',
-        fields: ['dateType', 'endDate', 'repeatInterval', 'repeatCount']
+        fields: [ 'dateType', 'endDate', 'repeatInterval', 'repeatCount' ]
       },
       meta: {
         label: 'Meta',
-        fields: ['tags', 'published']
+        fields: [ 'tags', 'published' ]
       }
     }
   },
@@ -179,12 +179,12 @@ module.exports = {
         }
       },
       afterPublish: {
-        async publishChildren(req, piece, options) {
+        async publishChildren(req, data) {
           // If this is a repeating item and firstTime is set, publish its children also
-          if (piece.published.dateType === 'repeat' && piece.firstTime) {
+          if (data.published.dateType === 'repeat' && data.firstTime) {
             const existing = await self
               .find(req, {
-                groupId: piece.draft.groupId
+                groupId: data.draft.groupId
               })
               .toArray();
             for (const child of existing) {

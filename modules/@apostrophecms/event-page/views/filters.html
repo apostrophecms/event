@@ -1,6 +1,8 @@
 {%- macro here(url, changes) -%}
   {{ url | build({
-    year: data.query.year
+    year: data.query.year,
+    month: data.query.month,
+    day: data.query.day
   }, changes) }}
 {%- endmacro -%}
 

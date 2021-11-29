@@ -114,7 +114,7 @@ module.exports = (self, query) => {
           if (!month) {
             return;
           }
-          const re = new RegExp(`${month}-`, 'gi');
+          const re = new RegExp(`^${month}-`, 'gi');
 
           query.and({
             $and: [ { startDate: re }, { endDate: re } ]
@@ -163,7 +163,7 @@ module.exports = (self, query) => {
           if (!day) {
             return;
           }
-          const re = new RegExp(`${day}`, 'gi');
+          const re = new RegExp(`^${day}`, 'gi');
 
           query.and({
             $and: [ { startDate: re }, { endDate: re } ]

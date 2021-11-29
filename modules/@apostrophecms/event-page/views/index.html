@@ -11,11 +11,11 @@
   }) %}
   <h2>Events</h2>
   {% for piece in data.pieces %}
-    <article class="apos-event-preview">
-      <h3 class="apos-event-title">
+    <article>
+      <h3>
         <a href="{{ piece._url }}">{{ piece.title }}</a>
       </h3>
-      <p class="apos-event-date">
+      <p>
         {{ piece.start | date('MMMM D') }} at {{ piece.start | date('h:mma') }}
       </p>
     </article>

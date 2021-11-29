@@ -2,8 +2,8 @@
 {% block title %}{{ data.piece.title }}{% endblock %}
 
 {% block main %}
-  <h1 class="apos-event-title">{{ data.piece.title }}</h1>
-  <p class="apos-event-date">
+  <h1>{{ data.piece.title }}</h1>
+  <p>
     {{ data.piece.start | date('MMMM D') }} at {{ data.piece.start | date('h:mma') }}
   </p>
 {% endblock %}

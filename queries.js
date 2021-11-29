@@ -80,7 +80,7 @@ module.exports = (self, query) => {
           return self.apos.launder.string(value);
         },
         async choices() {
-          const alldates = await query
+          const allDates = await query
             .clone()
             .upcoming(null)
             .toDistinct('startDate');
@@ -89,8 +89,8 @@ module.exports = (self, query) => {
             value: null,
             label: 'All'
           } ];
-          for (const eachdate of alldates) {
-            const year = eachdate.substr(0, 4);
+          for (const eachDate of allDates) {
+            const year = eachDate.substr(0, 4);
             if (!years.find(e => e.value === year)) {
               years.push({
                 value: year,
@@ -129,7 +129,7 @@ module.exports = (self, query) => {
           return s;
         },
         async choices() {
-          const alldates = await query
+          const allDates = await query
             .clone()
             .upcoming(null)
             .toDistinct('startDate');
@@ -138,8 +138,8 @@ module.exports = (self, query) => {
             value: null,
             label: 'All'
           } ];
-          for (const eachdate of alldates) {
-            const month = eachdate.substr(0, 7);
+          for (const eachDate of allDates) {
+            const month = eachDate.substr(0, 7);
             if (!months.find(e => e.value === month)) {
               months.push({
                 value: month,
@@ -178,7 +178,7 @@ module.exports = (self, query) => {
           return s;
         },
         async choices() {
-          const alldates = await query
+          const allDates = await query
             .clone()
             .upcoming(null)
             .toDistinct('startDate');
@@ -187,11 +187,11 @@ module.exports = (self, query) => {
             value: null,
             label: 'All'
           } ];
-          for (const eachdate of alldates) {
-            if (!days.find(e => e.value === eachdate)) {
+          for (const eachDate of allDates) {
+            if (!days.find(e => e.value === eachDate)) {
               days.push({
-                value: eachdate,
-                label: eachdate
+                value: eachDate,
+                label: eachDate
               });
             }
           }

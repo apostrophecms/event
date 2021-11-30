@@ -9,6 +9,6 @@ This bundle is intended to provide event functionality (concerts, recurring webi
 - [x] Index page should have pagination.
 - [ ] needs localization keys
 - [x] Make event description optional
-- [ ] Change `groupId` to `eventGroupId`
+- [x] Change `groupId` to `eventGroupId`
 - [ ] Fill out the README
 - [ ] Fix day `finalize` function to [capture multi-day events containing the date](https://github.com/apostrophecms/event/pull/4/files#r758619825)

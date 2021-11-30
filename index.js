@@ -155,13 +155,13 @@ module.exports = {
       },
       beforeInsert: {
         setGroupId(req, piece, options) {
-          // Set groupId on parent if this is a repeating item
+          // Sets eventGroupId on parent if this is a repeating item
           if (
             piece.dateType === 'repeat' &&
-            !piece.groupId &&
+            !piece.eventGroupId &&
             piece.aposMode === 'draft'
           ) {
-            piece.groupId = self.apos.util.generateId();
+            piece.eventGroupId = self.apos.util.generateId();
           }
         }
       },
@@ -183,7 +183,7 @@ module.exports = {
           if (data.published.dateType === 'repeat' && data.firstTime) {
             const existing = await self
               .find(req, {
-                groupId: data.draft.groupId
+                eventGroupId: data.draft.eventGroupId
               })
               .toArray();
             for (const child of existing) {

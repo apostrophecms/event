@@ -10,5 +10,5 @@ This bundle is intended to provide event functionality (concerts, recurring webi
 - [x] needs localization keys
 - [x] Make event description optional
 - [x] Change `groupId` to `eventGroupId`
-- [ ] Fix day `finalize` function to [capture multi-day events containing the date](https://github.com/apostrophecms/event/pull/4/files#r758619825)
+- [x] Fix day `finalize` function to [capture multi-day events containing the date](https://github.com/apostrophecms/event/pull/4/files#r758619825)
 - [ ] Fill out the README

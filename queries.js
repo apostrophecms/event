@@ -160,13 +160,15 @@ module.exports = (self, query) => {
         finalize() {
           const day = query.get('day');
 
-          if (!day) {
+          if (day === null) {
             return;
           }
-          const re = new RegExp(`^${day}`, 'gi');
 
           query.and({
-            $and: [ { startDate: re }, { endDate: re } ]
+            $and: [
+              { startDate: { $lte: day } },
+              { endDate: { $gte: day } }
+            ]
           });
         },
         launder(s) {

@@ -7,5 +7,12 @@ module.exports = {
       { name: 'month' },
       { name: 'day' }
     ]
+  },
+  extendMethods(self) {
+    return {
+      indexQuery(_super, req) {
+        return _super(req).upcoming(true);
+      }
+    };
   }
 };

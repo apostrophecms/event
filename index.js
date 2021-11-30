@@ -120,8 +120,7 @@ module.exports = {
       description: {
         type: 'string',
         label: 'Description',
-        textarea: true,
-        required: true
+        textarea: true
       }
     },
     group: {

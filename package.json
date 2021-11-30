@@ -1,7 +1,7 @@
 {
   "name": "@apostrophecms/event",
   "version": "1.0.0",
-  "description": "A template for creating an ApostropheCMS 3 module.",
+  "description": "Event management for Apostrophe 3 websites",
   "main": "index.js",
   "scripts": {
     "lint": "npm run eslint",
@@ -25,9 +25,7 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1",
-    "stylelint": "^13.7.1",
-    "stylelint-config-apostrophe": "^1.0.0"
+    "eslint-plugin-standard": "^4.0.1"
   },
   "prettier": {
     "trailingComma": "none",

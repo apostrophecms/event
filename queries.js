@@ -72,7 +72,7 @@ module.exports = (self, query) => {
           query.and({
             $and: [
               { startDate: { $lte: year + '-12-31' } },
-              { startDate: { $gte: year + '-01-01' } }
+              { endDate: { $gte: year + '-01-01' } }
             ]
           });
         },
@@ -114,10 +114,12 @@ module.exports = (self, query) => {
           if (!month) {
             return;
           }
-          const re = new RegExp(`^${month}-`, 'gi');
 
           query.and({
-            $and: [ { startDate: re }, { endDate: re } ]
+            $and: [
+              { startDate: { $lte: month + '-31' } },
+              { endDate: { $gte: month + '-01' } }
+            ]
           });
         },
         launder(s) {

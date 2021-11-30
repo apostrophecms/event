@@ -17,7 +17,7 @@
         <a href="{{ piece._url }}">{{ piece.title }}</a>
       </h3>
       <p>
-        {{ piece.start | date('MMMM D') }} at {{ piece.start | date('h:mma') }}
+        {{ piece.start | date('MMMM D, YYYY') }} at {{ piece.start | date('h:mma') }}
       </p>
     </article>
   {% endfor %}

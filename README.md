@@ -1,13 +1,3 @@
-## Stable release punch list
-- [x] The index page should only show upcoming published events, unless filtered by year, month, or day
-- [x] Index page default template should use H2 and H3 headings for sections (filters and events) and a paragraph or `date` for the date.
-- [x] Index page should have pagination.
-- [x] needs localization keys
-- [x] Make event description optional
-- [x] Change `groupId` to `eventGroupId`
-- [x] Fix day `finalize` function to [capture multi-day events containing the date](https://github.com/apostrophecms/event/pull/4/files#r758619825)
-- [x] Fill out the README
-
 [![CircleCI](https://circleci.com/gh/apostrophecms/event/tree/master.svg?style=svg)](https://circleci.com/gh/apostrophecms/event/tree/master)
 [![Chat on Discord](https://img.shields.io/discord/517772094482677790.svg)](https://chat.apostrophecms.org)
 

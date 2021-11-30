@@ -6,7 +6,7 @@ This bundle is intended to provide event functionality (concerts, recurring webi
 ## Stable release punch list
 - [ ] The index page should only show upcoming published events, unless filtered by year, month, or day
 - [x] Index page default template should use H2 and H3 headings for sections (filters and events) and a paragraph or `date` for the date.
-- [ ] Index page should have pagination.
+- [x] Index page should have pagination.
 - [ ] needs localization keys
 - [x] Make event description optional
 - [ ] Change `groupId` to `eventGroupId`

@@ -1,5 +1,6 @@
 {% extends data.outerLayout %}
 {% import "filters.html" as filters %}
+{% import '@apostrophecms/pager:macros.html' as pager with context %}
 {% block title %}{{ data.page.title }}{% endblock %}
 
 {% block main %}
@@ -20,4 +21,11 @@
       </p>
     </article>
   {% endfor %}
+
+  {{ pager.render({
+    page: data.currentPage,
+    total: data.totalPages,
+    class: 'blog-pager'
+  }, data.url) }}
+
 {% endblock %}

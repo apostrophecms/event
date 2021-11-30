@@ -44,15 +44,15 @@ module.exports = (self, query) => {
           return [
             {
               value: null,
-              label: 'Both'
+              label: 'aposEvent:filterUpcomingBoth'
             },
             {
               value: true,
-              label: 'Upcoming'
+              label: 'aposEvent:filterUpcomingTrue'
             },
             {
               value: false,
-              label: 'Past'
+              label: 'aposEvent:filterUpcomingFalse'
             }
           ];
         }
@@ -87,7 +87,7 @@ module.exports = (self, query) => {
 
           const years = [ {
             value: null,
-            label: 'All'
+            label: 'aposEvent:filterAll'
           } ];
           for (const eachDate of allDates) {
             const year = eachDate.substr(0, 4);
@@ -136,7 +136,7 @@ module.exports = (self, query) => {
 
           const months = [ {
             value: null,
-            label: 'All'
+            label: 'aposEvent:filterAll'
           } ];
           for (const eachDate of allDates) {
             const month = eachDate.substr(0, 7);
@@ -185,7 +185,7 @@ module.exports = (self, query) => {
 
           const days = [ {
             value: null,
-            label: 'All'
+            label: 'aposEvent:filterAll'
           } ];
           for (const eachDate of allDates) {
             if (!days.find(e => e.value === eachDate)) {

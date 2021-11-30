@@ -4,13 +4,13 @@
 {% block title %}{{ data.page.title }}{% endblock %}
 
 {% block main %}
-  <h2>Filters</h2>
+  <h2>{{ __t('aposEvent:filters') }}</h2>
   {% render filters.render({
     filters: data.piecesFilters,
     query: data.query,
     url: data.page._url
   }) %}
-  <h2>Events</h2>
+  <h2>{{ __t('aposEvent:pluralLabel') }}</h2>
   {% for piece in data.pieces %}
     <article>
       <h3>

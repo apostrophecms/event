@@ -1,22 +1,22 @@
 module.exports = {
   add: {
     upcoming: {
-      label: 'Upcoming',
+      label: 'aposEvent:filterUpcoming',
       inputType: 'select',
       def: true
     },
     year: {
-      label: 'Year',
+      label: 'aposEvent:filterYear',
       inputType: 'select',
       def: null
     },
     month: {
-      label: 'Month',
+      label: 'aposEvent:filterMonth',
       inputType: 'select',
       def: null
     },
     day: {
-      label: 'Days',
+      label: 'aposEvent:filterDay',
       inputType: 'select',
       def: null
     }

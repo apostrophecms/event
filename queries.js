@@ -44,15 +44,15 @@ module.exports = (self, query) => {
           return [
             {
               value: null,
-              label: 'Both'
+              label: 'aposEvent:filterUpcomingBoth'
             },
             {
               value: true,
-              label: 'Upcoming'
+              label: 'aposEvent:filterUpcomingTrue'
             },
             {
               value: false,
-              label: 'Past'
+              label: 'aposEvent:filterUpcomingFalse'
             }
           ];
         }
@@ -72,7 +72,7 @@ module.exports = (self, query) => {
           query.and({
             $and: [
               { startDate: { $lte: year + '-12-31' } },
-              { startDate: { $gte: year + '-01-01' } }
+              { endDate: { $gte: year + '-01-01' } }
             ]
           });
         },
@@ -87,7 +87,7 @@ module.exports = (self, query) => {
 
           const years = [ {
             value: null,
-            label: 'All'
+            label: 'aposEvent:filterAll'
           } ];
           for (const eachDate of allDates) {
             const year = eachDate.substr(0, 4);
@@ -114,10 +114,12 @@ module.exports = (self, query) => {
           if (!month) {
             return;
           }
-          const re = new RegExp(`^${month}-`, 'gi');
 
           query.and({
-            $and: [ { startDate: re }, { endDate: re } ]
+            $and: [
+              { startDate: { $lte: month + '-31' } },
+              { endDate: { $gte: month + '-01' } }
+            ]
           });
         },
         launder(s) {
@@ -136,7 +138,7 @@ module.exports = (self, query) => {
 
           const months = [ {
             value: null,
-            label: 'All'
+            label: 'aposEvent:filterAll'
           } ];
           for (const eachDate of allDates) {
             const month = eachDate.substr(0, 7);
@@ -160,13 +162,15 @@ module.exports = (self, query) => {
         finalize() {
           const day = query.get('day');
 
-          if (!day) {
+          if (day === null) {
             return;
           }
-          const re = new RegExp(`^${day}`, 'gi');
 
           query.and({
-            $and: [ { startDate: re }, { endDate: re } ]
+            $and: [
+              { startDate: { $lte: day } },
+              { endDate: { $gte: day } }
+            ]
           });
         },
         launder(s) {
@@ -185,7 +189,7 @@ module.exports = (self, query) => {
 
           const days = [ {
             value: null,
-            label: 'All'
+            label: 'aposEvent:filterAll'
           } ];
           for (const eachDate of allDates) {
             if (!days.find(e => e.value === eachDate)) {

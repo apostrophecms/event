@@ -42,9 +42,18 @@ module.exports = (self, query) => {
         },
         choices() {
           return [
-            { value: null, label: 'Both' },
-            { value: true, label: 'Upcoming' },
-            { value: false, label: 'Past' }
+            {
+              value: null,
+              label: 'aposEvent:filterUpcomingBoth'
+            },
+            {
+              value: true,
+              label: 'aposEvent:filterUpcomingTrue'
+            },
+            {
+              value: false,
+              label: 'aposEvent:filterUpcomingFalse'
+            }
           ];
         }
       },
@@ -63,7 +72,7 @@ module.exports = (self, query) => {
           query.and({
             $and: [
               { startDate: { $lte: year + '-12-31' } },
-              { startDate: { $gte: year + '-01-01' } }
+              { endDate: { $gte: year + '-01-01' } }
             ]
           });
         },
@@ -71,16 +80,22 @@ module.exports = (self, query) => {
           return self.apos.launder.string(value);
         },
         async choices() {
-          const alldates = await query
+          const allDates = await query
             .clone()
             .upcoming(null)
             .toDistinct('startDate');
 
-          const years = [{ value: null, label: 'All' }];
-          for (const eachdate of alldates) {
-            const year = eachdate.substr(0, 4);
+          const years = [ {
+            value: null,
+            label: 'aposEvent:filterAll'
+          } ];
+          for (const eachDate of allDates) {
+            const year = eachDate.substr(0, 4);
             if (!years.find(e => e.value === year)) {
-              years.push({ value: year, label: year });
+              years.push({
+                value: year,
+                label: year
+              });
             }
           }
           years.sort().reverse();
@@ -99,30 +114,39 @@ module.exports = (self, query) => {
           if (!month) {
             return;
           }
-          const re = new RegExp(`${month}-`, 'gi');
 
           query.and({
-            $and: [{ startDate: re }, { endDate: re }]
+            $and: [
+              { startDate: { $lte: month + '-31' } },
+              { endDate: { $gte: month + '-01' } }
+            ]
           });
         },
         launder(s) {
           s = self.apos.launder.string(s);
+
           if (!s.match(/^\d\d\d\d-\d\d$/)) {
             return null;
           }
           return s;
         },
         async choices() {
-          const alldates = await query
+          const allDates = await query
             .clone()
             .upcoming(null)
             .toDistinct('startDate');
 
-          const months = [{ value: null, label: 'All' }];
-          for (const eachdate of alldates) {
-            const month = eachdate.substr(0, 7);
+          const months = [ {
+            value: null,
+            label: 'aposEvent:filterAll'
+          } ];
+          for (const eachDate of allDates) {
+            const month = eachDate.substr(0, 7);
             if (!months.find(e => e.value === month)) {
-              months.push({ value: month, label: month });
+              months.push({
+                value: month,
+                label: month
+              });
             }
           }
           months.sort().reverse();
@@ -138,32 +162,41 @@ module.exports = (self, query) => {
         finalize() {
           const day = query.get('day');
 
-          if (!day) {
+          if (day === null) {
             return;
           }
-          const re = new RegExp(`${day}`, 'gi');
 
           query.and({
-            $and: [{ startDate: re }, { endDate: re }]
+            $and: [
+              { startDate: { $lte: day } },
+              { endDate: { $gte: day } }
+            ]
           });
         },
         launder(s) {
           s = self.apos.launder.string(s);
+
           if (!s.match(fullDateRegex)) {
             return null;
           }
           return s;
         },
         async choices() {
-          const alldates = await query
+          const allDates = await query
             .clone()
             .upcoming(null)
             .toDistinct('startDate');
 
-          const days = [{ value: null, label: 'All' }];
-          for (const eachdate of alldates) {
-            if (!days.find(e => e.value === eachdate)) {
-              days.push({ value: eachdate, label: eachdate });
+          const days = [ {
+            value: null,
+            label: 'aposEvent:filterAll'
+          } ];
+          for (const eachDate of allDates) {
+            if (!days.find(e => e.value === eachDate)) {
+              days.push({
+                value: eachDate,
+                label: eachDate
+              });
             }
           }
           days.sort().reverse();

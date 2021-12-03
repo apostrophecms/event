@@ -12,42 +12,35 @@ module.exports = {
     modules: getBundleModuleNames()
   },
   options: {
-    label: 'Event',
-    pluralLabel: 'Events',
-    sort: { start: 1 }
+    label: 'aposEvent:label',
+    pluralLabel: 'aposEvent:pluralLabel',
+    sort: { start: 1 },
+    i18n: {
+      ns: 'aposEvent',
+      browser: true
+    }
   },
   columns: {
     add: {
       start: {
-        label: 'Start'
+        label: 'aposEvent:start'
       }
     }
   },
   fields: {
     add: {
       startDate: {
-        label: 'Start date',
+        label: 'aposEvent:startDate',
         type: 'date',
         required: true
       },
       allDay: {
-        label: 'Is this an all day event?',
+        label: 'aposEvent:allDay',
         type: 'boolean',
-        choices: [
-          {
-            label: 'Yes',
-            value: true
-          },
-          {
-            label: 'No',
-            value: false,
-            showFields: ['startTime', 'endTime']
-          }
-        ],
         def: false
       },
       startTime: {
-        label: 'Start time',
+        label: 'aposEvent:startTime',
         type: 'time',
         def: '09:00 AM',
         required: true,
@@ -56,7 +49,7 @@ module.exports = {
         }
       },
       endTime: {
-        label: 'End time',
+        label: 'aposEvent:endTime',
         type: 'time',
         def: '05:30 PM',
         required: true,
@@ -65,43 +58,43 @@ module.exports = {
         }
       },
       dateType: {
-        label: 'What type of event is this?',
+        label: 'aposEvent:dateType',
         help:
-          'Select if the event is on a single day, consecutive days, or repeats.',
+          'aposEvent:dateTypeHelp',
         type: 'select',
         choices: [
           {
-            label: 'Single Day',
+            label: 'aposEvent:dateTypeSingle',
             value: 'single'
           },
           {
-            label: 'Consecutive Days',
+            label: 'aposEvent:dateTypeConsecutive',
             value: 'consecutive'
           },
           {
-            label: 'Recurring',
+            label: 'aposEvent:dateTypeRecurring',
             value: 'repeat'
           }
         ],
         def: 'single'
       },
       endDate: {
-        label: 'End date',
+        label: 'aposEvent:endDate',
         type: 'date',
         if: {
           dateType: 'consecutive'
         }
       },
       repeatInterval: {
-        label: 'How often does the event repeat?',
+        label: 'aposEvent:interval',
         type: 'select',
         choices: [
           {
-            label: 'Every week',
+            label: 'aposEvent:intervalWeekly',
             value: 'weeks'
           },
           {
-            label: 'Every month',
+            label: 'aposEvent:intervalMonthly',
             value: 'months'
           }
         ],
@@ -110,7 +103,7 @@ module.exports = {
         }
       },
       repeatCount: {
-        label: 'How many times does it repeat?',
+        label: 'aposEvent:repeatCount',
         type: 'integer',
         def: 1,
         if: {
@@ -119,17 +112,13 @@ module.exports = {
       },
       description: {
         type: 'string',
-        label: 'Description',
-        textarea: true,
-        required: true
+        label: 'aposEvent:description',
+        textarea: true
       }
     },
     group: {
       basics: {
-        label: 'Basics',
         fields: [
-          'title',
-          'slug',
           'description',
           'startDate',
           'allDay',
@@ -138,12 +127,13 @@ module.exports = {
         ]
       },
       advanced: {
-        label: 'Advanced',
-        fields: ['dateType', 'endDate', 'repeatInterval', 'repeatCount']
-      },
-      meta: {
-        label: 'Meta',
-        fields: ['tags', 'published']
+        label: 'aposEvent:advanced',
+        fields: [
+          'dateType',
+          'endDate',
+          'repeatInterval',
+          'repeatCount'
+        ]
       }
     }
   },
@@ -156,13 +146,13 @@ module.exports = {
       },
       beforeInsert: {
         setGroupId(req, piece, options) {
-          // Set groupId on parent if this is a repeating item
+          // Sets eventGroupId on parent if this is a repeating item
           if (
             piece.dateType === 'repeat' &&
-            !piece.groupId &&
+            !piece.eventGroupId &&
             piece.aposMode === 'draft'
           ) {
-            piece.groupId = self.apos.util.generateId();
+            piece.eventGroupId = self.apos.util.generateId();
           }
         }
       },
@@ -179,12 +169,12 @@ module.exports = {
         }
       },
       afterPublish: {
-        async publishChildren(req, piece, options) {
+        async publishChildren(req, data) {
           // If this is a repeating item and firstTime is set, publish its children also
-          if (piece.published.dateType === 'repeat' && piece.firstTime) {
+          if (data.published.dateType === 'repeat' && data.firstTime) {
             const existing = await self
               .find(req, {
-                groupId: piece.draft.groupId
+                eventGroupId: data.draft.eventGroupId
               })
               .toArray();
             for (const child of existing) {

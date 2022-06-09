@@ -59,7 +59,7 @@ module.exports = {
       },
       // Adding the event page type
       {
-        name: '@apostrophecms/event',
+        name: '@apostrophecms/event-page',
         label: 'Event Page'
       }
     ]

@@ -2,7 +2,7 @@ module.exports = {
   add: {
     upcoming: {
       label: 'aposEvent:filterUpcoming',
-      inputType: 'select',
+      inputType: 'radio',
       def: true
     },
     year: {

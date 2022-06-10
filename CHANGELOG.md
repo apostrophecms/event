@@ -3,6 +3,7 @@
 ## UNRELEASED
 
 * Change upcoming filter in manager modal from select to radio
+* Fix typo in enable the page type documentation referencing piece module
 
 ## 1.0.0 - 2021-12-08
 

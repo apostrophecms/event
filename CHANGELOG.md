@@ -1,6 +1,8 @@
 # Changelog
 
-## UNRELEASED
+## 1.0.1 - 2022-06-22
+
+### Fixes
 
 * Change upcoming filter in manager modal from select to radio
 * Fix typo in enable the page type documentation referencing piece module

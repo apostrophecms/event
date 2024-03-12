@@ -4,7 +4,7 @@
   <h1>Apostrophe Events</h1>
   <p>
     <a aria-label="Apostrophe logo" href="https://v3.docs.apostrophecms.org">
-      <img src="https://img.shields.io/badge/MADE%20FOR%20Apostrophe%203-000000.svg?style=for-the-badge&logo=Apostrophe&labelColor=6516dd">
+      <img src="https://img.shields.io/badge/MADE%20FOR%20ApostropheCMS-000000.svg?style=for-the-badge&logo=Apostrophe&labelColor=6516dd">
     </a>
     <a aria-label="Test status" href="https://circleci.com/gh/apostrophecms/event/tree/main">
       <img alt="" src="https://img.shields.io/circleci/build/github/apostrophecms/event?labelColor=000000&logo=circleci&style=for-the-badge">

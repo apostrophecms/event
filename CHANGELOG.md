@@ -1,5 +1,10 @@
 # Changelog
 
+## UNRELEASED
+
+### Adds
+* Add AI and community-reviewed translation strings
+
 ## 1.0.1 - 2022-06-22
 
 ### Fixes

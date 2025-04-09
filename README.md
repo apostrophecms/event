@@ -6,9 +6,6 @@
     <a aria-label="Apostrophe logo" href="https://v3.docs.apostrophecms.org">
       <img src="https://img.shields.io/badge/MADE%20FOR%20ApostropheCMS-000000.svg?style=for-the-badge&logo=Apostrophe&labelColor=6516dd">
     </a>
-    <a aria-label="Test status" href="https://circleci.com/gh/apostrophecms/event/tree/main">
-      <img alt="" src="https://img.shields.io/circleci/build/github/apostrophecms/event?labelColor=000000&logo=circleci&style=for-the-badge">
-    </a>
     <a aria-label="Join the community on Discord" href="http://chat.apostrophecms.org">
       <img alt="" src="https://img.shields.io/discord/517772094482677790?color=5865f2&label=Join%20the%20Discord&logo=discord&logoColor=fff&labelColor=000&style=for-the-badge&logoWidth=20">
     </a>
@@ -18,7 +15,7 @@
   </p>
 </div>
 
-This module bundle helps developers quickly add event content to Apostrophe 3 websites. It provides the event piece type (`@apostrophecms/event`) as well as a special page type (`@apostrophecms/event-page`) for editors to create an event listing.
+This module bundle helps developers quickly add event content to Apostrophe websites. It provides the event piece type (`@apostrophecms/event`) as well as a special page type (`@apostrophecms/event-page`) for editors to create an event listing.
 
 ## Installation
 

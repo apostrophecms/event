@@ -1,5 +1,11 @@
 # Changelog
 
+## UNRELEASED
+
+### Changes
+
+* Removes circle ci, adds github actions.
+
 ## 1.0.2 (2024-09-05)
 
 ### Adds

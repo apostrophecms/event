@@ -2,6 +2,10 @@
 
 ## UNRELEASED
 
+### Adds
+
+* Adds a default SEO schema type
+
 ### Changes
 
 * Removes circle ci, adds github actions.

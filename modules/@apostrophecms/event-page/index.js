@@ -6,7 +6,8 @@ module.exports = {
       { name: 'year' },
       { name: 'month' },
       { name: 'day' }
-    ]
+    ],
+    seoSchemaType: 'CollectionPage'
   },
   extendMethods(self) {
     return {
